@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name="texterra",
     desciption="API for natural language processing.",
-    version='2.0.0',
+    version='1.0.0',
     url="https://api.ispras.ru/",
     long_description="""Texterra API provides tools for natural language processing, \
     social networks analysis, and knowledge base utilization.""",
