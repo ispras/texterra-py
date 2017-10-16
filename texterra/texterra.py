@@ -1,0 +1,299 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+from . import ispras
+
+from . import feature
+
+class API(ispras.API):
+    """
+    This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and custom queries
+    Note that NLP methods return annotations only
+    """
+
+    # Default Texterra path
+    texterraName = 'texterra'
+    texterraVersion = 'v3.1'
+    maxBatchSize = 1000000
+
+    def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', False), name=None, ver=None,
+                 host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
+        """ Provide only apikey to use default Texterra service name and version. """
+        if host is None:
+            if name is None:
+                name = API.texterraName
+            if ver is None:
+                ver = API.texterraVersion
+            ispras.API.__init__(self, key, name, ver)
+        else:
+            ispras.API.__init__(self, host=host, key=key)
+
+    # NLP annotating methods
+
+    def languageDetection(self, texts):
+        """
+        Detects given texts' language.
+
+        :param texts: the texts to be language detected
+        :type texts: list(str)
+        :return: yields given texts' ISO 639-1 language codes
+        :rtype: str generator
+        """
+        return self.processTexts(texts, feature.languageDetection)
+
+    def sentenceDetection(self, texts, rtype='full', domain='', language=''):
+        """
+        Detects boundaries of sentences in given texts.
+
+        :param texts: the texts to be sentence tokenized
+        :type texts: list(str)
+        :param rtype: sets return type (the default is 'full'):
+                     - 'sentence': list(str), i.e. list of detected sentences
+                     - 'annotation': list(tuple(int, int)), i.e. list of detected sentences' start, end indexes
+                     - 'full': list(tuple(int, int, str))
+        :type rtype: str
+        :return: yields lists of tuples, where tuple contains a sentence's start, end indexes and its value
+        :rtype: generator of list(tuple(int, int, str))
+        """
+        return self.processTexts(texts, feature.sentenceDetection, rtype=rtype, domain=domain, language=language)
+
+    def tokenization(self, texts, rtype='full', domain='', language=''):
+        """
+        Detects all tokens (minimal significant text parts) in given texts.
+
+        :param texts: the texts to be tokenized.
+        :type texts: list(str)
+        :param rtype: sets return type (the default is 'full'):
+                    - 'token': list(str), i.e. list of detected tokens
+                    - 'annotation': list(tuple(int, int)), i.e. list of detected tokens' start, end indexes
+                    - 'full': list(tuple(int, int, str))
+        :type rtype: str
+        :return: yields lists of tuples, where each tuple contains a token's start, end indexes and its value.
+        :rtype: generator of list(tuple(int, int, str))
+        """
+        return self.processTexts(texts, feature.tokenization, rtype=rtype, domain=domain, language=language)
+
+    def lemmatization(self, texts, rtype='full', domain='', language=''):
+        """
+        Detects each word's lemma in given texts.
+
+        :param texts: the texts to lemmatize
+        :type texts: list(str)
+        :param rtype: sets return type (the default is 'full'):
+                     - 'lemma': list(str), i.e. list of lemmas
+                     - 'annotation': list(tuple(int, int, str)), i.e. list of lemmas’ start, end indexes and value
+                     - 'full': list(tuple(int, int, str, str))
+        :type rtype: str
+        :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, its value and lemma
+        :rtype: generator of list(tuple(int, int, str, str))
+        """
+        return self.processTexts(texts, feature.lemmatization, rtype=rtype, domain=domain, language=language)
+
+    def posTagging(self, texts, rtype='full', domain='', language=''):
+        """
+        Detects each token's part of speech tag in given texts.
+
+        :param texts: the text to be pos-tagged
+        :type texts: list(str)
+        :param rtype: sets return type (the default is 'full'):
+                     - 'token': list(tuple(str, str)), i.e. list of detected tokens and their tags
+                     - 'annotation': list(tuple(int, int, str)), i.e. list of tokens’ start, end indexes and tag
+                     - 'full': list(tuple(int, int, str, str))
+        :type rtype: str
+        :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, value, and tag
+        :rtype: generator of list(tuple(int, int, str, str))
+        """
+        return self.processTexts(texts, feature.posTagging, rtype=rtype, domain=domain, language=language)
+
+    def spellingCorrection(self, texts, rtype='full', domain='', language=''):
+        """
+        Tries to correct spelling errors in given texts.
+
+        :param texts: the text to be corrected
+        :type texts: list(str)
+        :param rtype: sets return type (the default is 'full'):
+                     - 'token': list(tuple(str, str)), i.e. list of tokens and their corrections
+                     - 'annotation': list(tuple(int, int, str)), i.e. list of tokens’ start, end indexes and correction
+                     - 'full': list(tuple(int, int, str, str))
+        :type rtype: str
+        :return: yields lists of tuples, where each tuple contains a token’s start, end indexes,
+                its value and correction
+        :rtype: generator of list(tuple(int, int, str, str))
+        """
+        return self.processTexts(texts, feature.spellingCorrection, rtype=rtype, domain=domain, language=language)
+
+    def namedEntities(self, texts, rtype='full', domain='', language=''):
+        """
+        Finds all named entities occurrences in given texts.
+
+        :param texts: the text to be analyzed
+        :type texts: list(str)
+        :param rtype: sets return type (the default is 'full'):
+                     - 'entity': list(tuple(str, str)), i.e. list of named entities and their BBN categories
+                     - 'full': list(tuple(int, int, str, str))
+        :type rtype: str
+        :return: yields lists of tuples, where each tuple contains a named entity’s start, end indexes, value, and
+                 BBN category
+        :rtype: generator of list(tuple(int, int, str, str))
+        """
+        return self.processTexts(texts, feature.namedEntities, rtype=rtype, domain=domain, language=language)
+
+    def disambiguation(self, texts, domain='', language=''):
+        """
+        Detects the most appropriate meanings (concepts) for terms occurred in a given text.
+
+        :param texts: the text to be disambiguated
+        :type texts: list(str)
+        :return: yields lists of tuples. Each tuple contains a term’s start, end indexes, value, and the link to
+                 the corresponding article in KB.
+        :rtype: generator of list(tuple(int, int, str, str))
+        """
+        return self.processTexts(texts, feature.disambiguation, domain=domain, language=language)
+
+    def keyConcepts(self, texts, domain='', language=''):
+        """
+        Key concepts are the concepts providing short (conceptual) and informative text description.
+        This service extracts the key concepts for given texts.
+
+        :param texts: the text to be analyzed
+        :type texts: list(str)
+        :return: yields lists of links to concepts' corresponding KB articles
+                sorted by concept weight in descending order
+        :rtype: generator of list(str)
+        """
+        return self.processTexts(texts, feature.keyConcepts, domain=domain, language=language)
+
+    def subjectivityDetection(self, texts, domain='', language=''):
+        """
+        Detects for each of the given texts if it is subjective or not.
+
+        :param texts: the texts to be analyzed
+        :type texts: list(str)
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :return: yields True for subjective texts, otherwise False.
+        :rtype: bool generator
+        """
+        return self.processTexts(texts, feature.subjectivityDetection, domain=domain, language=language)
+
+    def polarityDetection(self, texts, domain='', language=''):
+        """
+        Detects whether given texts have positive, negative, or no sentiment, with respect to domain.
+        If domain isn't provided, domain detection is applied, this way method tries to achieve best results.
+        If no domain is detected general domain algorithm is applied.
+
+        :param texts: the texts to be analyzed
+        :type texts: list(str)
+        :param domain: domain
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
+        :return: yields tuples containing a text's polarity and domain.
+        :rtype: generator of tuple(str, str)
+        """
+        return self.processTexts(texts, feature.polarityDetection, domain=domain, language=language)
+
+    def syntaxDetection(self, sentences, domain='', language=''):
+        """
+        Detects syntax relations in given sentences.
+
+        :param sentences: the sentences to be parsed
+        :type sentences: list(str)
+        :return: yields a SyntaxTree instance for each sentence
+        :rtype: generator of SyntaxTree
+        """
+        return self.processTexts(sentences, feature.syntaxDetection, domain=domain, language=language)
+
+    # Section of KBM methods
+
+    def __wrapConcepts(self, concepts, kbname):
+        """ Utility wrapper for matrix parameters """
+        if isinstance(concepts, list):
+            if isinstance(kbname, list):
+                return ''.join(['id={0}:{1};'.format(concept, kb) for concept, kb in zip(concepts, kbname)])
+            else:
+                return ''.join(['id={0}:{1};'.format(concept, kbname) for concept in concepts])
+        else:
+            return 'id={0}:{1};'.format(concepts, kbname)
+
+    def representationTerms(self, text, termCandidates, featureType=['commonness', 'info-measure']):
+        """
+        Determines if Knowledge base contains the specified terms and computes features of the specified types for them.
+        """
+        params = {'featureType': featureType}
+        payload = {
+            'text': text,
+            'annotations': {
+                'term-candidate': termCandidates
+            }
+        }
+        return self.POST('representation/terms', params=params, json=payload, format='json')
+
+    def getAttributes(self, concepts, kbname, atrList=[]):
+        """
+        Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
+        Supported attributes:
+            coordinates - GPS coordinates
+            definition - brief concept definition
+            url(<language>) - URL to page with description of the given concept on the specified language
+            <language> - language code, like: en, de, fr, ko, ru, ...
+            synonym - different textual representations of the concept
+            title - concept title
+            translation(<language>) textual representation of the concept on the specified language
+            <language> - language code, like: en, de, fr, ko, ru, ...
+            type - concept type
+        """
+        params = {'attribute': atrList}
+        return self.customQuery('walker/{}'.format(self.__wrapConcepts(concepts, kbname)), params)
+
+    # Helper methods
+
+    def batchQuery(self, texts, params=None):
+        """ Invoke custom batch request to Texterra. """
+        result = self.POST('nlp', params, json=texts, format='json')
+        return result
+
+    def customQuery(self, path, params, headers=None, json=None, data=None, format='xml'):
+        """ Invoke custom request to Texterra. """
+        if data is not None or json is not None:
+            return self.POST(path, params, headers=headers, json=json, data=data, format=format)
+        else:
+            return self.GET(path, params, format=format)
+
+    def processTexts(self, texts, module, rtype=None, domain='', language=''):
+        for batch in self._getBatches(texts):
+            if len(batch) != 0:
+                params = module.params()
+
+                if language != '':
+                    params['language'] = language
+
+                if domain != '':
+                    params['domain'] = domain
+
+                for document in self.batchQuery(batch, params):
+                    yield module.process(document, rtype, api=self)
+
+    def _getBatches(self, texts):
+        """ Reads texts from iterator and yield in 1MB-size batches."""
+        if isinstance(texts, str):
+            self._checkSize([texts])
+            yield [{'text': texts}]
+        else:
+            batch = []
+            for text in texts:
+                if self._checkSize(batch + [text]):
+                    batch.append({'text': text})
+                else:
+                    yield batch
+                    batch = [{'text': text}]
+                    self._checkSize(batch)
+            yield batch
+
+    def _checkSize(self, texts):
+        """ Checks that texts don't exceed memory limit. """
+        if sys.getsizeof(texts) >= self.maxBatchSize:
+            if len(texts) == 1:
+                raise ValueError("Given text is over {0} bytes, exceeds limit.".format(self.maxBatchSize))
+            raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.maxBatchSize))
+        return True
