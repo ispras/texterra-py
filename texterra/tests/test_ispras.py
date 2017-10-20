@@ -22,7 +22,7 @@ class CustomTexterraAPITest(unittest.TestCase):
         self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST, key=TEXTERRA_CUSTOM_KEY)
 
     def test_custom_getAttributes(self):
-        self.assertIsInstance(self.custom_texterra.getAttributes(12, 'enwiki'), dict)
+        self.assertIsInstance(self.custom_texterra.get_attributes(12, 'enwiki'), dict)
 
 
 class TexterraAPITest(unittest.TestCase):
@@ -39,17 +39,17 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_key_concepts(self):
         # test return type
-        self.assertIsInstance(self.texterra.keyConcepts([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.keyConcepts([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.keyConcepts([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.keyConcepts([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.key_concepts([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.key_concepts([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.key_concepts([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.key_concepts([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
         concepts = []
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.keyConcepts(text):
+            for entry in self.texterra.key_concepts(text):
                 self.assertIsInstance(entry, list)
                 entry_concepts = []
                 for concept in entry:
@@ -58,7 +58,7 @@ class TexterraAPITest(unittest.TestCase):
                 concepts.append(entry_concepts)
 
         # test for text iterator
-        result = self.texterra.keyConcepts(texts)
+        result = self.texterra.key_concepts(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, list)
@@ -67,7 +67,7 @@ class TexterraAPITest(unittest.TestCase):
 
         # test memory limit on large text
         try:
-            self.texterra.keyConcepts(5000 * self.en_text)
+            self.texterra.key_concepts(5000 * self.en_text)
         except Exception as e:
             self.assertIsInstance(e, ValueError)
             self.assertEqual(str(e), "Given text is over 1000000 bytes, exceeds limit.")
@@ -124,20 +124,20 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_syntaxDetection(self):
         # test return type
-        self.assertIsInstance(self.texterra.syntaxDetection([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.syntaxDetection([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.syntaxDetection([self.ru_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.syntaxDetection([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.syntax_detection([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.syntax_detection([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.syntax_detection([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.syntax_detection([self.en_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.syntaxDetection(text):
+            for entry in self.texterra.syntax_detection(text):
                 self.assertIsInstance(entry, texterra.SyntaxTree)
 
         # test for text iterator
-        result = self.texterra.syntaxDetection(texts)
+        result = self.texterra.syntax_detection(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, texterra.SyntaxTree)
@@ -148,7 +148,7 @@ class TexterraAPITest(unittest.TestCase):
 
         # test english
         en_test_sent = "Our kids should grow up in an America where opportunity is real."
-        en_result = next(self.texterra.syntaxDetection([en_test_sent]))
+        en_result = next(self.texterra.syntax_detection([en_test_sent]))
         self.assertIsInstance(en_result, texterra.SyntaxTree)
         self.assertEqual(en_result.getLabels(),
                          ["advmod", "nsubj", "dep", "ROOT", "advmod", "prep", "det", "pobj", "punct", "nsubj",
@@ -158,7 +158,7 @@ class TexterraAPITest(unittest.TestCase):
 
         # test russian
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
-        ru_result = next(self.texterra.syntaxDetection([ru_test_sent]))
+        ru_result = next(self.texterra.syntax_detection([ru_test_sent]))
         self.assertIsInstance(ru_result, texterra.SyntaxTree)
         self.assertEqual(ru_result.getLabels(),
                          ["обст", "опред", "предл", "квазиагент", "PUNCT", "предик", "квазиагент", "ROOT", "2-компл",
@@ -168,26 +168,26 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_languageDetectionAnnotate(self):
         # test return type
-        self.assertIsInstance(self.texterra.languageDetection([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.languageDetection([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.languageDetection([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.languageDetection([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.language_detection([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.language_detection([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.language_detection([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.language_detection([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.languageDetection(text):
+            for entry in self.texterra.language_detection(text):
                 self.assertIsInstance(entry, str if sys.version_info[0] == 3 else basestring)
 
         # test for text iterator
-        result = self.texterra.languageDetection(texts)
+        result = self.texterra.language_detection(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, str if sys.version_info[0] == 3 else basestring)
 
         # test english
-        lang_list = list(self.texterra.languageDetection(texts))
+        lang_list = list(self.texterra.language_detection(texts))
         self.assertEqual(lang_list[0], 'en')
         self.assertEqual(lang_list[2], 'en')
 
@@ -197,20 +197,20 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_sentenceDetection(self):
         # test return type
-        self.assertIsInstance(self.texterra.sentenceDetection([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.sentenceDetection([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.sentenceDetection([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.sentenceDetection([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.sentence_detection([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.sentence_detection([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.sentence_detection([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.sentence_detection([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.sentenceDetection(text):
+            for entry in self.texterra.sentence_detection(text):
                 self.assertIsInstance(entry, list)
 
         # test for text iterator
-        result = self.texterra.sentenceDetection(texts)
+        result = self.texterra.sentence_detection(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, list)
@@ -222,7 +222,7 @@ class TexterraAPITest(unittest.TestCase):
 
         # test english
         en_test_text = "If you've never tried it, I think it's an interesting exercise to do without the Python semantics. It does make you appreciate what the language is providing."
-        en_result = next(self.texterra.sentenceDetection([en_test_text]))
+        en_result = next(self.texterra.sentence_detection([en_test_text]))
         en_result_expected = [(0, 98,
                                "If you've never tried it, I think it's an interesting exercise to do without the Python semantics."),
                               (99, 158, "It does make you appreciate what the language is providing.")]
@@ -230,7 +230,7 @@ class TexterraAPITest(unittest.TestCase):
 
         # test russian
         ru_test_text = "Выражение является полноправным оператором в Python. Состав, синтаксис, ассоциативность и приоритет операций достаточно привычны для языков программирования и призваны минимизировать употребление скобок."
-        ru_result = next(self.texterra.sentenceDetection([ru_test_text]))
+        ru_result = next(self.texterra.sentence_detection([ru_test_text]))
         ru_result_expected = [(0, 52, "Выражение является полноправным оператором в Python."),
                               (53, 203,
                                "Состав, синтаксис, ассоциативность и приоритет операций достаточно привычны для языков программирования и призваны минимизировать употребление скобок.")]
@@ -306,20 +306,20 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_posTagging(self):
         # test return type
-        self.assertIsInstance(self.texterra.posTagging([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.posTagging([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.posTagging([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.posTagging([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.pos_tagging([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.pos_tagging([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.pos_tagging([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.pos_tagging([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.posTagging(text):
+            for entry in self.texterra.pos_tagging(text):
                 self.assertIsInstance(entry, list)
 
         # test for text iterator
-        result = self.texterra.posTagging(texts)
+        result = self.texterra.pos_tagging(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, list)
@@ -332,7 +332,7 @@ class TexterraAPITest(unittest.TestCase):
 
         en_test_sent = "Our kids should grow up in an America where opportunity is real."
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
-        result = self.texterra.posTagging([en_test_sent, ru_test_sent])
+        result = self.texterra.pos_tagging([en_test_sent, ru_test_sent])
 
         # test english
         en_result = next(result)
@@ -353,27 +353,27 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_namedEntities(self):
         # test return type
-        self.assertIsInstance(self.texterra.namedEntities([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.namedEntities([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.namedEntities([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.namedEntities([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.named_entities([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.named_entities([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.named_entities([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.named_entities([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.namedEntities(text):
+            for entry in self.texterra.named_entities(text):
                 self.assertIsInstance(entry, list)
 
         # test for text iterator
-        result = self.texterra.namedEntities(texts)
+        result = self.texterra.named_entities(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, list)
 
         en_test_sent = "Our kids should grow up in an America where opportunity is real."
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
-        result = self.texterra.namedEntities([en_test_sent, ru_test_sent])
+        result = self.texterra.named_entities([en_test_sent, ru_test_sent])
 
         # test english
         en_result = next(result)
@@ -388,68 +388,68 @@ class TexterraAPITest(unittest.TestCase):
 
     def test_subjectivityDetection(self):
         # test return type
-        self.assertIsInstance(self.texterra.subjectivityDetection([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.subjectivityDetection([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.subjectivityDetection([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.subjectivityDetection([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.subjectivity_detection([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.subjectivity_detection([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.subjectivity_detection([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.subjectivity_detection([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.subjectivityDetection(text):
+            for entry in self.texterra.subjectivity_detection(text):
                 self.assertIsInstance(entry, bool)
 
         # test for text iterator
-        result = self.texterra.subjectivityDetection(texts)
+        result = self.texterra.subjectivity_detection(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, bool)
 
-        en_result = next(self.texterra.subjectivityDetection([self.en_tweet]))
+        en_result = next(self.texterra.subjectivity_detection([self.en_tweet]))
         en_result_expected = True
         self.assertEqual(en_result, en_result_expected)
 
     def test_polarityDetection(self):
         # test return type
-        self.assertIsInstance(self.texterra.polarityDetection([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.polarityDetection([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.polarityDetection([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.polarityDetection([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.polarity_detection([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.polarity_detection([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.polarity_detection([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.polarity_detection([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.polarityDetection(text):
+            for entry in self.texterra.polarity_detection(text):
                 self.assertIsInstance(entry, tuple)
 
         # test for text iterator
-        result = self.texterra.polarityDetection(texts)
+        result = self.texterra.polarity_detection(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, tuple)
 
-        en_result = next(self.texterra.polarityDetection([self.en_tweet]))
+        en_result = next(self.texterra.polarity_detection([self.en_tweet]))
         en_result_expected = "POSITIVE"
         self.assertEqual(en_result[0], en_result_expected)
 
     def test_spellingCorrection(self):
         # test return type
-        self.assertIsInstance(self.texterra.spellingCorrection([self.en_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.spellingCorrection([self.ru_text]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.spellingCorrection([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.spellingCorrection([self.ru_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.spelling_correction([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.spelling_correction([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.spelling_correction([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.spelling_correction([self.ru_tweet]), types.GeneratorType)
 
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
 
         # test for a single text
         for text in texts:
-            for entry in self.texterra.spellingCorrection(text):
+            for entry in self.texterra.spelling_correction(text):
                 self.assertIsInstance(entry, list)
 
         # test for text iterator
-        result = self.texterra.spellingCorrection(texts)
+        result = self.texterra.spelling_correction(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, list)
@@ -460,13 +460,13 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(spelling_token[2], str if sys.version_info[0] == 3 else basestring)
                 self.assertIsInstance(spelling_token[3], str if sys.version_info[0] == 3 else basestring)
 
-    def test_representationTerms(self):
-        termCandidates = [
+    def test_representation_terms(self):
+        term_candidates = [
             {'start': 0, 'end': 5},
             {'start': 6, 'end': 11}
         ]
         featureType = ['commonness', 'info-measure']
-        res = self.texterra.representationTerms(self.en_text, termCandidates, featureType)
+        res = self.texterra.representation_terms(self.en_text, term_candidates, featureType)
         self.assertIsInstance(res, dict)
         self.assertEqual(res['text'], self.en_text)
         self.assertIsInstance(res['annotations'], dict)
@@ -474,8 +474,8 @@ class TexterraAPITest(unittest.TestCase):
         self.assertIsInstance(res['annotations']['info-measure'], list)
 
     def test_getAttributes(self):
-        self.assertIsInstance(self.texterra.getAttributes(12, 'enwiki'), dict)
-        self.assertIsInstance(self.texterra.getAttributes([12, 13137], 'enwiki'), dict)
-        self.assertIsInstance(self.texterra.getAttributes(12, 'enwiki', ['url(en)', 'type']), dict)
-        self.assertIsInstance(self.texterra.getAttributes([12, 13137], 'enwiki', ['url(en)', 'title']), dict)
+        self.assertIsInstance(self.texterra.get_attributes(12, 'enwiki'), dict)
+        self.assertIsInstance(self.texterra.get_attributes([12, 13137], 'enwiki'), dict)
+        self.assertIsInstance(self.texterra.get_attributes(12, 'enwiki', ['url(en)', 'type']), dict)
+        self.assertIsInstance(self.texterra.get_attributes([12, 13137], 'enwiki', ['url(en)', 'title']), dict)
 
