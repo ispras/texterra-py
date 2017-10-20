@@ -267,7 +267,7 @@ class API(ispras.API):
                 'term-candidate': term_candidates
             }
         }
-        return self.POST('representation/terms', params=params, json=payload, format='json')
+        return self.POST('representation/terms', params=params, json=payload, fmt='json')
 
     def get_attributes(self, concepts, kbname, atr_list=None):
         """
@@ -290,15 +290,15 @@ class API(ispras.API):
 
     def batch_query(self, texts, params=None):
         """ Invoke custom batch request to Texterra. """
-        result = self.POST('nlp', params, json=texts, format='json')
+        result = self.POST('nlp', params, json=texts, fmt='json')
         return result
 
     def custom_query(self, path, params, headers=None, json=None, data=None, fmt='xml'):
         """ Invoke custom request to Texterra. """
         if data is not None or json is not None:
-            return self.POST(path, params, headers=headers, json=json, data=data, format=fmt)
+            return self.POST(path, params, headers=headers, json=json, data=data, fmt=fmt)
         else:
-            return self.GET(path, params, format=fmt)
+            return self.GET(path, params, fmt=fmt)
 
     def process_texts(self, texts, module, rtype=None, domain='', language=''):
         for batch in self._get_batches(texts):
