@@ -14,23 +14,19 @@ def process(document, rtype=None, api=None):
         attributes = set()
         for entry in document['annotations'][annotationName]:
             for concept in entry['value']:
-                attributes.add('url({0})'.format(concept['concept']['kb-name'][:2]))
-                ids.append(concept['concept']['id'])
-                kbnames.append(concept['concept']['kb-name'])
-                weights[concept['concept']['id']] = concept['weight']
+                concept_id = concept['concept']['id']
+                kb_name = concept['concept']['kb-name']
+                attributes.add('url({0})'.format(kb_name[:2]))
+                ids.append(concept_id)
+                kbnames.append(kb_name)
+                weights['{0}:{1}'.format(concept_id, kb_name)] = concept['weight']
 
-        if len(ids) > 1:
-            concepts = []
-            atrs = api.get_attributes(ids, kbnames, list(attributes))['elements']['object']
-            for at in atrs:
-                concepts.append((weights[int(at['concept']['id'])],
-                                 at['attributes']['I-attribute']['url']['#text']))
-            concepts.sort(key=lambda x: -x[0])
-            result = [c[1] for c in concepts]
-
-        elif len(ids) == 1:
-            atrs = api.get_attributes(ids, kbnames, list(attributes))['elements']['object']
-            result = [atrs['attributes']['I-attribute']['url']['#text']]
+        concepts = []
+        atrs = api.get_attributes(ids, kbnames, list(attributes))
+        for at in atrs:
+            concepts.append((weights[at], atrs[at]['url']))
+        concepts.sort(key=lambda x: -x[0])
+        result = [c[1] for c in concepts]
 
     return result
 

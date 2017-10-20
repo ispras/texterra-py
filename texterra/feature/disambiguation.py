@@ -17,21 +17,12 @@ def process(document, rtype=None, api=None):
             ids.append(term_id)
             kbnames.append(kb_name)
             attributes.add('url({0})'.format(kb_name[:2]))
-            terms.append((term['start'], term['end'], document['text'][term['start']: term['end']], term_id))
+            terms.append((term['start'], term['end'], document['text'][term['start']: term['end']],
+                          '{0}:{1}'.format(term_id, kb_name)))
 
-        if len(ids) > 1:
-            atrs = api.get_attributes(ids, kbnames, list(attributes))['elements']['object']
-            urls = {}
-            for at in atrs:
-                urls[int(at['concept']['id'])] = at['attributes']['I-attribute']['url']['#text']
-
-            for term in terms:
-                result.append((term[0], term[1], term[2], urls[term[3]]))
-
-        elif len(ids) == 1:
-            atrs = api.get_attributes(ids, kbnames, list(attributes))
-            url = atrs['elements']['object']['attributes']['I-attribute']['url']['#text']
-            result = [(terms[0][0], terms[0][1], terms[0][2], url)]
+        atrs = api.get_attributes(ids, kbnames, list(attributes))
+        for term in terms:
+            result.append((term[0], term[1], term[2], atrs[term[3]]['url']))
 
     return result
 

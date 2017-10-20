@@ -25,7 +25,7 @@ pydoc texterra.texterra
 import texterra
 ```
 
-4. Now you can create an access object using your Apikey:
+4. Now you can create an access object using your API key:
 ```python
 t = texterra.API('YOURKEY')
 ```

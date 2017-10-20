@@ -268,7 +268,7 @@ class API(ispras.API):
         }
         return self.post('representation/terms', params=params, json=payload, fmt='json')
 
-    def get_attributes(self, concepts, kbname, atr_list=None):
+    def get_attributes(self, concepts, kbname, atr_list=None, fmt='json'):
         """
         Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
         Supported attributes:
@@ -283,7 +283,7 @@ class API(ispras.API):
             type - concept type
         """
         params = {'attribute': atr_list or []}
-        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbname)), params)
+        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbname)), params, fmt=fmt)
 
     # Helper methods
 
