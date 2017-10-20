@@ -44,12 +44,12 @@ class API(object):
 
         return self._parse(page, fmt)
 
-    def _parse(self, page, fmt):
+    def _parse(self, page, fmt='json'):
         if fmt == 'json':
             return page.json()
         else:
             return page.text
 
-    def _headers(self, fmt):
+    def _headers(self, fmt='json'):
         headers = {'Accept': 'application/json'}
         return headers
