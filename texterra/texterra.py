@@ -25,9 +25,8 @@ class API(ispras.API):
         """ Provide only apikey to use default Texterra service name and version. """
         if host is None:
             ver = ver or API.texterra_version
-            ispras.API.__init__(self, key, API.texterra_name, ver)
-        else:
-            ispras.API.__init__(self, host=host, key=key)
+
+        super().__init__(key=key, name=API.texterra_name, ver=ver, host=host)
 
     # NLP annotating methods
 
@@ -267,7 +266,7 @@ class API(ispras.API):
                 'term-candidate': term_candidates
             }
         }
-        return self.POST('representation/terms', params=params, json=payload, fmt='json')
+        return self.post('representation/terms', params=params, json=payload, fmt='json')
 
     def get_attributes(self, concepts, kbname, atr_list=None):
         """
@@ -290,15 +289,15 @@ class API(ispras.API):
 
     def batch_query(self, texts, params=None):
         """ Invoke custom batch request to Texterra. """
-        result = self.POST('nlp', params, json=texts, fmt='json')
+        result = self.post('nlp', params, json=texts, fmt='json')
         return result
 
     def custom_query(self, path, params, headers=None, json=None, data=None, fmt='xml'):
         """ Invoke custom request to Texterra. """
         if data is not None or json is not None:
-            return self.POST(path, params, headers=headers, json=json, data=data, fmt=fmt)
+            return self.post(path, params, headers=headers, json=json, data=data, fmt=fmt)
         else:
-            return self.GET(path, params, fmt=fmt)
+            return self.get(path, params, fmt=fmt)
 
     def process_texts(self, texts, module, rtype=None, domain='', language=''):
         for batch in self._get_batches(texts):

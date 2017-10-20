@@ -30,7 +30,7 @@ class TexterraAPITest(unittest.TestCase):
         TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
         TEXTERRA_SERVICE_NAME = os.environ.get("TEXTERRA_SERVICE_NAME")
         TEXTERRA_SERVICE_VERSION = os.environ.get("TEXTERRA_SERVICE_VERSION")
-        self.texterra = texterra.API(TEXTERRA_KEY, TEXTERRA_SERVICE_NAME, TEXTERRA_SERVICE_VERSION)
+        self.texterra = texterra.API(key=TEXTERRA_KEY, ver=TEXTERRA_SERVICE_VERSION)
 
         self.en_text = 'Apple today updated iMac to bring numerous high-performance enhancements to the leading all-in-one desktop. iMac now features fourth-generation Intel Core processors, new graphics, and next-generation Wi-Fi. In addition, it now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation'
         self.ru_text = 'Первые в этом году переговоры министра иностранных дел России Сергея Лаврова и госсекретаря США Джона Керри, длившиеся 1,5 часа, завершились в Мюнхене.'

@@ -4,25 +4,25 @@ import requests
 
 
 class API(object):
+    """ Class for accessing ISPRAS API. """
+
     API_URL = 'http://api.ispras.ru/{0}/{1}/'
 
     def __init__(self, key=False, name=None, ver=None, host=None):
-        if host:
+        if host is not None:
             self.apikey = key
             self.url = host
         else:
-            import sys
             if len(key) == 40:
-                self.serviceName = name
-                self.serviceVersion = ver
+                self.service_name = name
+                self.service_version = ver
                 self.apikey = key
                 self.url = API.API_URL.format(name, ver)
             else:
-                print('Please provide proper apikey')
-                sys.exit(0)
+                raise ValueError('Invalid API key. Please provide proper API key.')
 
-    def GET(self, path, request_params, fmt='xml'):
-        """Method for invoking Ispras API GET request"""
+    def get(self, path, request_params, fmt='xml'):
+        """Method for invoking ISPRAS API GET request"""
         url = self.url + path
         if self.apikey:
             request_params['apikey'] = self.apikey
@@ -32,7 +32,7 @@ class API(object):
         else:
             page.raise_for_status()
 
-    def POST(self, path, params, data=None, fmt='xml', json=None, headers=None):
+    def post(self, path, params, data=None, fmt='xml', json=None, headers=None):
         """ Method for invoking ISPRAS API POST request """
         if self.apikey:
             params['apikey'] = self.apikey
