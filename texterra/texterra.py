@@ -25,7 +25,7 @@ class API(ispras.API):
         """ Provide only apikey to use default Texterra service name and version. """
         if host is None:
             ver = ver or API.texterra_version
-            ispras.API.__init__(self, key, name, ver)
+            ispras.API.__init__(self, key, API.texterra_name, ver)
         else:
             ispras.API.__init__(self, host=host, key=key)
 
