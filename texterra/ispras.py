@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import xmltodict
 import requests
 
 
@@ -21,7 +20,7 @@ class API(object):
             else:
                 raise ValueError('Invalid API key. Please provide proper API key.')
 
-    def get(self, path, request_params, fmt='xml'):
+    def get(self, path, request_params, fmt='json'):
         """Method for invoking ISPRAS API GET request"""
         url = self.url + path
         if self.apikey:
@@ -32,7 +31,7 @@ class API(object):
         else:
             page.raise_for_status()
 
-    def post(self, path, params, data=None, fmt='xml', json=None, headers=None):
+    def post(self, path, params, data=None, fmt='json', json=None, headers=None):
         """ Method for invoking ISPRAS API POST request """
         if self.apikey:
             params['apikey'] = self.apikey
@@ -45,18 +44,12 @@ class API(object):
 
         return self._parse(page, fmt)
 
-    def _parse(self, page, format):
-        if format == 'xml':
-            return xmltodict.parse(page.text)
-        elif format == 'json':
+    def _parse(self, page, fmt):
+        if fmt == 'json':
             return page.json()
         else:
             return page.text
 
     def _headers(self, fmt):
-        headers = {}
-        if fmt == 'xml':
-            headers['Accept'] = 'application/xml'
-        elif fmt == 'json':
-            headers['Accept'] = 'application/json'
+        headers = {'Accept': 'application/json'}
         return headers

@@ -292,7 +292,7 @@ class API(ispras.API):
         result = self.post('nlp', params, json=texts, fmt='json')
         return result
 
-    def custom_query(self, path, params, headers=None, json=None, data=None, fmt='xml'):
+    def custom_query(self, path, params, headers=None, json=None, data=None, fmt='json'):
         """ Invoke custom request to Texterra. """
         if data is not None or json is not None:
             return self.post(path, params, headers=headers, json=json, data=data, fmt=fmt)
