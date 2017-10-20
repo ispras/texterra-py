@@ -2,8 +2,12 @@
 import os
 import sys
 from . import ispras
-
 from . import feature
+
+"""
+A module containing standard NLP methods as well as tools for knowledge-base utilization.
+"""
+
 
 class API(ispras.API):
     """
@@ -20,10 +24,8 @@ class API(ispras.API):
                  host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
         """ Provide only apikey to use default Texterra service name and version. """
         if host is None:
-            if name is None:
-                name = API.texterraName
-            if ver is None:
-                ver = API.texterraVersion
+            name = name or API.texterraName
+            ver = ver or API.texterraVersion
             ispras.API.__init__(self, key, name, ver)
         else:
             ispras.API.__init__(self, host=host, key=key)
