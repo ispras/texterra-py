@@ -244,15 +244,15 @@ class API(ispras.API):
 
     # Section of KBM methods
 
-    def _wrap_concepts(self, concepts, kbname):
+    def _wrap_concepts(self, concepts, kbnames):
         """ Utility wrapper for matrix parameters """
         if isinstance(concepts, list):
-            if isinstance(kbname, list):
-                return ''.join(['id={0}:{1};'.format(concept, kb) for concept, kb in zip(concepts, kbname)])
+            if isinstance(kbnames, list):
+                return ''.join(['id={0}:{1};'.format(concept, kb) for concept, kb in zip(concepts, kbnames)])
             else:
-                return ''.join(['id={0}:{1};'.format(concept, kbname) for concept in concepts])
+                return ''.join(['id={0}:{1};'.format(concept, kbnames) for concept in concepts])
         else:
-            return 'id={0}:{1};'.format(concepts, kbname)
+            return 'id={0}:{1};'.format(concepts, kbnames)
 
     def representation_terms(self, text, term_candidates, feature_type=None):
         """
@@ -268,7 +268,7 @@ class API(ispras.API):
         }
         return self.post('representation/terms', params=params, json=payload, fmt='json')
 
-    def get_attributes(self, concepts, kbname, atr_list=None, fmt='json'):
+    def get_attributes(self, concepts, kbnames, atr_list=None, fmt='json'):
         """
         Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
         Supported attributes:
@@ -283,7 +283,7 @@ class API(ispras.API):
             type - concept type
         """
         params = {'attribute': atr_list or []}
-        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbname)), params, fmt=fmt)
+        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbnames)), params, fmt=fmt)
 
     # Helper methods
 
