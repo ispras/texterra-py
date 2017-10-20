@@ -20,9 +20,10 @@ def process(document, rtype=None, api=None):
             terms.append((term['start'], term['end'], document['text'][term['start']: term['end']],
                           '{0}:{1}'.format(term_id, kb_name)))
 
-        atrs = api.get_attributes(ids, kbnames, list(attributes))
-        for term in terms:
-            result.append((term[0], term[1], term[2], atrs[term[3]]['url']))
+        if len(ids) > 0:
+            atrs = api.get_attributes(ids, kbnames, list(attributes))
+            for term in terms:
+                result.append((term[0], term[1], term[2], atrs[term[3]]['url']))
 
     return result
 

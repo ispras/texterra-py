@@ -21,12 +21,13 @@ def process(document, rtype=None, api=None):
                 kbnames.append(kb_name)
                 weights['{0}:{1}'.format(concept_id, kb_name)] = concept['weight']
 
-        concepts = []
-        atrs = api.get_attributes(ids, kbnames, list(attributes))
-        for at in atrs:
-            concepts.append((weights[at], atrs[at]['url']))
-        concepts.sort(key=lambda x: -x[0])
-        result = [c[1] for c in concepts]
+        if len(ids) > 0:
+            concepts = []
+            atrs = api.get_attributes(ids, kbnames, list(attributes))
+            for at in atrs:
+                concepts.append((weights[at], atrs[at]['url']))
+            concepts.sort(key=lambda x: -x[0])
+            result = [c[1] for c in concepts]
 
     return result
 
