@@ -16,7 +16,7 @@ setup(
               'disambiguation', 'key concepts detection'],
     classifiers=['Intended Audience :: Science/Research',
                  'Intended Audience :: Developers',
-                 # 'License :: ',
+                 'License :: Apache License, Version 2.0',
                  'Programming Language :: Python',
                  'Topic :: Software Development',
                  'Topic :: Scientific/Engineering',
