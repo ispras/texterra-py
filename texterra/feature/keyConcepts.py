@@ -21,7 +21,7 @@ def process(document, rtype=None, api=None):
 
         if len(ids) > 1:
             concepts = []
-            atrs = api.getAttributes(ids, kbnames, list(attributes))['elements']['object']
+            atrs = api.get_attributes(ids, kbnames, list(attributes))['elements']['object']
             for at in atrs:
                 concepts.append((weights[int(at['concept']['id'])],
                                  at['attributes']['I-attribute']['url']['#text']))
@@ -29,7 +29,7 @@ def process(document, rtype=None, api=None):
             result = [c[1] for c in concepts]
 
         elif len(ids) == 1:
-            atrs = api.getAttributes(ids, kbnames, list(attributes))['elements']['object']
+            atrs = api.get_attributes(ids, kbnames, list(attributes))['elements']['object']
             result = [atrs['attributes']['I-attribute']['url']['#text']]
 
     return result

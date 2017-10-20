@@ -20,7 +20,7 @@ and check documentation of methods for each service
 pydoc texterra.texterra
 ```
 
-3. To use TEXTERRA API in your project, simply import it like this: 
+3. To use Texterra API in your project, simply import it like this: 
 ```python
 import texterra
 ```
@@ -30,10 +30,10 @@ import texterra
 t = texterra.API('YOURKEY')
 ```
 
-5. To access different tools just call corresponding method:
+5. To access different tools just call the corresponding method:
 ```python
-tags = t.posTaggingAnnotate('Hello World') 
+tags = t.pos_tagging('Hello World') 
 # You can also invoke Texterra with custom request: 
-result = t.customQuery(path, query) # for GET request 
-result = t.customQuery(path, query, form) # for POST request
+result = t.custom_query(path, query) # for GET request 
+result = t.custom_query(path, query, form) # for POST request
 ```

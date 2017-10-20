@@ -20,7 +20,7 @@ def process(document, rtype=None, api=None):
             terms.append((term['start'], term['end'], document['text'][term['start']: term['end']], term_id))
 
         if len(ids) > 1:
-            atrs = api.getAttributes(ids, kbnames, list(attributes))['elements']['object']
+            atrs = api.get_attributes(ids, kbnames, list(attributes))['elements']['object']
             urls = {}
             for at in atrs:
                 urls[int(at['concept']['id'])] = at['attributes']['I-attribute']['url']['#text']
@@ -29,7 +29,7 @@ def process(document, rtype=None, api=None):
                 result.append((term[0], term[1], term[2], urls[term[3]]))
 
         elif len(ids) == 1:
-            atrs = api.getAttributes(ids, kbnames, list(attributes))
+            atrs = api.get_attributes(ids, kbnames, list(attributes))
             url = atrs['elements']['object']['attributes']['I-attribute']['url']['#text']
             result = [(terms[0][0], terms[0][1], terms[0][2], url)]
 

@@ -21,31 +21,31 @@ class API(object):
                 print('Please provide proper apikey')
                 sys.exit(0)
 
-    def GET(self, path, request_params, format='xml'):
+    def GET(self, path, request_params, fmt='xml'):
         """Method for invoking Ispras API GET request"""
         url = self.url + path
         if self.apikey:
             request_params['apikey'] = self.apikey
-        page = requests.get(url, params=request_params, headers=self.__headers(format), timeout=60)
+        page = requests.get(url, params=request_params, headers=self._headers(fmt), timeout=60)
         if page.status_code == 200:
-            return self.__parse(page, format)
+            return self._parse(page, fmt)
         else:
             page.raise_for_status()
 
-    def POST(self, path, params, data=None, format='xml', json=None, headers=None):
+    def POST(self, path, params, data=None, fmt='xml', json=None, headers=None):
         """ Method for invoking ISPRAS API POST request """
         if self.apikey:
             params['apikey'] = self.apikey
 
         if headers is None:
-            headers = self.__headers(format)
+            headers = self._headers(fmt)
 
         page = requests.post(self.url + path, params=params, headers=headers, data=data, json=json, timeout=60)
         page.raise_for_status()  # raises exception if not successful
 
-        return self.__parse(page, format)
+        return self._parse(page, fmt)
 
-    def __parse(self, page, format):
+    def _parse(self, page, format):
         if format == 'xml':
             return xmltodict.parse(page.text)
         elif format == 'json':
@@ -53,10 +53,10 @@ class API(object):
         else:
             return page.text
 
-    def __headers(self, format):
+    def _headers(self, fmt):
         headers = {}
-        if format == 'xml':
+        if fmt == 'xml':
             headers['Accept'] = 'application/xml'
-        elif format == 'json':
+        elif fmt == 'json':
             headers['Accept'] = 'application/json'
         return headers

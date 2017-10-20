@@ -11,28 +11,27 @@ A module containing standard NLP methods as well as tools for knowledge-base uti
 
 class API(ispras.API):
     """
-    This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and custom queries
-    Note that NLP methods return annotations only
+    This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and
+    custom queries.
     """
 
     # Default Texterra path
-    texterraName = 'texterra'
-    texterraVersion = 'v3.1'
-    maxBatchSize = 1000000
+    texterra_name = 'texterra'
+    texterra_version = 'v3.1'
+    max_batch_size = 1000000
 
-    def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', False), name=None, ver=None,
+    def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', False), ver=None,
                  host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
         """ Provide only apikey to use default Texterra service name and version. """
         if host is None:
-            name = name or API.texterraName
-            ver = ver or API.texterraVersion
+            ver = ver or API.texterra_version
             ispras.API.__init__(self, key, name, ver)
         else:
             ispras.API.__init__(self, host=host, key=key)
 
     # NLP annotating methods
 
-    def languageDetection(self, texts):
+    def language_detection(self, texts):
         """
         Detects given texts' language.
 
@@ -41,9 +40,9 @@ class API(ispras.API):
         :return: yields given texts' ISO 639-1 language codes
         :rtype: str generator
         """
-        return self.processTexts(texts, feature.languageDetection)
+        return self.process_texts(texts, feature.languageDetection)
 
-    def sentenceDetection(self, texts, rtype='full', domain='', language=''):
+    def sentence_detection(self, texts, rtype='full', domain='', language=''):
         """
         Detects boundaries of sentences in given texts.
 
@@ -54,10 +53,14 @@ class API(ispras.API):
                      - 'annotation': list(tuple(int, int)), i.e. list of detected sentences' start, end indexes
                      - 'full': list(tuple(int, int, str))
         :type rtype: str
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples, where tuple contains a sentence's start, end indexes and its value
         :rtype: generator of list(tuple(int, int, str))
         """
-        return self.processTexts(texts, feature.sentenceDetection, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.sentenceDetection, rtype=rtype, domain=domain, language=language)
 
     def tokenization(self, texts, rtype='full', domain='', language=''):
         """
@@ -70,10 +73,14 @@ class API(ispras.API):
                     - 'annotation': list(tuple(int, int)), i.e. list of detected tokens' start, end indexes
                     - 'full': list(tuple(int, int, str))
         :type rtype: str
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples, where each tuple contains a token's start, end indexes and its value.
         :rtype: generator of list(tuple(int, int, str))
         """
-        return self.processTexts(texts, feature.tokenization, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.tokenization, rtype=rtype, domain=domain, language=language)
 
     def lemmatization(self, texts, rtype='full', domain='', language=''):
         """
@@ -86,12 +93,16 @@ class API(ispras.API):
                      - 'annotation': list(tuple(int, int, str)), i.e. list of lemmas’ start, end indexes and value
                      - 'full': list(tuple(int, int, str, str))
         :type rtype: str
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, its value and lemma
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.processTexts(texts, feature.lemmatization, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.lemmatization, rtype=rtype, domain=domain, language=language)
 
-    def posTagging(self, texts, rtype='full', domain='', language=''):
+    def pos_tagging(self, texts, rtype='full', domain='', language=''):
         """
         Detects each token's part of speech tag in given texts.
 
@@ -102,12 +113,16 @@ class API(ispras.API):
                      - 'annotation': list(tuple(int, int, str)), i.e. list of tokens’ start, end indexes and tag
                      - 'full': list(tuple(int, int, str, str))
         :type rtype: str
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, value, and tag
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.processTexts(texts, feature.posTagging, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.posTagging, rtype=rtype, domain=domain, language=language)
 
-    def spellingCorrection(self, texts, rtype='full', domain='', language=''):
+    def spelling_correction(self, texts, rtype='full', domain='', language=''):
         """
         Tries to correct spelling errors in given texts.
 
@@ -118,13 +133,17 @@ class API(ispras.API):
                      - 'annotation': list(tuple(int, int, str)), i.e. list of tokens’ start, end indexes and correction
                      - 'full': list(tuple(int, int, str, str))
         :type rtype: str
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples, where each tuple contains a token’s start, end indexes,
                 its value and correction
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.processTexts(texts, feature.spellingCorrection, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.spellingCorrection, rtype=rtype, domain=domain, language=language)
 
-    def namedEntities(self, texts, rtype='full', domain='', language=''):
+    def named_entities(self, texts, rtype='full', domain='', language=''):
         """
         Finds all named entities occurrences in given texts.
 
@@ -134,11 +153,15 @@ class API(ispras.API):
                      - 'entity': list(tuple(str, str)), i.e. list of named entities and their BBN categories
                      - 'full': list(tuple(int, int, str, str))
         :type rtype: str
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples, where each tuple contains a named entity’s start, end indexes, value, and
                  BBN category
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.processTexts(texts, feature.namedEntities, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.namedEntities, rtype=rtype, domain=domain, language=language)
 
     def disambiguation(self, texts, domain='', language=''):
         """
@@ -146,26 +169,34 @@ class API(ispras.API):
 
         :param texts: the text to be disambiguated
         :type texts: list(str)
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of tuples. Each tuple contains a term’s start, end indexes, value, and the link to
                  the corresponding article in KB.
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.processTexts(texts, feature.disambiguation, domain=domain, language=language)
+        return self.process_texts(texts, feature.disambiguation, domain=domain, language=language)
 
-    def keyConcepts(self, texts, domain='', language=''):
+    def key_concepts(self, texts, domain='', language=''):
         """
         Key concepts are the concepts providing short (conceptual) and informative text description.
         This service extracts the key concepts for given texts.
 
         :param texts: the text to be analyzed
         :type texts: list(str)
+        :param domain: specifies texts' domain (auto-detect if not provided)
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields lists of links to concepts' corresponding KB articles
                 sorted by concept weight in descending order
         :rtype: generator of list(str)
         """
-        return self.processTexts(texts, feature.keyConcepts, domain=domain, language=language)
+        return self.process_texts(texts, feature.keyConcepts, domain=domain, language=language)
 
-    def subjectivityDetection(self, texts, domain='', language=''):
+    def subjectivity_detection(self, texts, domain='', language=''):
         """
         Detects for each of the given texts if it is subjective or not.
 
@@ -173,12 +204,14 @@ class API(ispras.API):
         :type texts: list(str)
         :param domain: specifies texts' domain (auto-detect if not provided)
         :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields True for subjective texts, otherwise False.
         :rtype: bool generator
         """
-        return self.processTexts(texts, feature.subjectivityDetection, domain=domain, language=language)
+        return self.process_texts(texts, feature.subjectivityDetection, domain=domain, language=language)
 
-    def polarityDetection(self, texts, domain='', language=''):
+    def polarity_detection(self, texts, domain='', language=''):
         """
         Detects whether given texts have positive, negative, or no sentiment, with respect to domain.
         If domain isn't provided, domain detection is applied, this way method tries to achieve best results.
@@ -193,22 +226,26 @@ class API(ispras.API):
         :return: yields tuples containing a text's polarity and domain.
         :rtype: generator of tuple(str, str)
         """
-        return self.processTexts(texts, feature.polarityDetection, domain=domain, language=language)
+        return self.process_texts(texts, feature.polarityDetection, domain=domain, language=language)
 
-    def syntaxDetection(self, sentences, domain='', language=''):
+    def syntax_detection(self, sentences, domain='', language=''):
         """
         Detects syntax relations in given sentences.
 
         :param sentences: the sentences to be parsed
         :type sentences: list(str)
+        :param domain: domain
+        :type domain: str
+        :param language: texts' language ISO 639-1 code
+        :type language: str
         :return: yields a SyntaxTree instance for each sentence
         :rtype: generator of SyntaxTree
         """
-        return self.processTexts(sentences, feature.syntaxDetection, domain=domain, language=language)
+        return self.process_texts(sentences, feature.syntaxDetection, domain=domain, language=language)
 
     # Section of KBM methods
 
-    def __wrapConcepts(self, concepts, kbname):
+    def _wrap_concepts(self, concepts, kbname):
         """ Utility wrapper for matrix parameters """
         if isinstance(concepts, list):
             if isinstance(kbname, list):
@@ -218,20 +255,21 @@ class API(ispras.API):
         else:
             return 'id={0}:{1};'.format(concepts, kbname)
 
-    def representationTerms(self, text, termCandidates, featureType=['commonness', 'info-measure']):
+    def representation_terms(self, text, term_candidates, feature_type=None):
         """
         Determines if Knowledge base contains the specified terms and computes features of the specified types for them.
+        If no feature
         """
-        params = {'featureType': featureType}
+        params = {'featureType': feature_type or ['commonness', 'info-measure']}
         payload = {
             'text': text,
             'annotations': {
-                'term-candidate': termCandidates
+                'term-candidate': term_candidates
             }
         }
         return self.POST('representation/terms', params=params, json=payload, format='json')
 
-    def getAttributes(self, concepts, kbname, atrList=[]):
+    def get_attributes(self, concepts, kbname, atr_list=None):
         """
         Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
         Supported attributes:
@@ -245,25 +283,25 @@ class API(ispras.API):
             <language> - language code, like: en, de, fr, ko, ru, ...
             type - concept type
         """
-        params = {'attribute': atrList}
-        return self.customQuery('walker/{}'.format(self.__wrapConcepts(concepts, kbname)), params)
+        params = {'attribute': atr_list or []}
+        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbname)), params)
 
     # Helper methods
 
-    def batchQuery(self, texts, params=None):
+    def batch_query(self, texts, params=None):
         """ Invoke custom batch request to Texterra. """
         result = self.POST('nlp', params, json=texts, format='json')
         return result
 
-    def customQuery(self, path, params, headers=None, json=None, data=None, format='xml'):
+    def custom_query(self, path, params, headers=None, json=None, data=None, fmt='xml'):
         """ Invoke custom request to Texterra. """
         if data is not None or json is not None:
-            return self.POST(path, params, headers=headers, json=json, data=data, format=format)
+            return self.POST(path, params, headers=headers, json=json, data=data, format=fmt)
         else:
-            return self.GET(path, params, format=format)
+            return self.GET(path, params, format=fmt)
 
-    def processTexts(self, texts, module, rtype=None, domain='', language=''):
-        for batch in self._getBatches(texts):
+    def process_texts(self, texts, module, rtype=None, domain='', language=''):
+        for batch in self._get_batches(texts):
             if len(batch) != 0:
                 params = module.params()
 
@@ -273,29 +311,29 @@ class API(ispras.API):
                 if domain != '':
                     params['domain'] = domain
 
-                for document in self.batchQuery(batch, params):
+                for document in self.batch_query(batch, params):
                     yield module.process(document, rtype, api=self)
 
-    def _getBatches(self, texts):
+    def _get_batches(self, texts):
         """ Reads texts from iterator and yield in 1MB-size batches."""
         if isinstance(texts, str):
-            self._checkSize([texts])
+            self._check_size([texts])
             yield [{'text': texts}]
         else:
             batch = []
             for text in texts:
-                if self._checkSize(batch + [text]):
+                if self._check_size(batch + [text]):
                     batch.append({'text': text})
                 else:
                     yield batch
                     batch = [{'text': text}]
-                    self._checkSize(batch)
+                    self._check_size(batch)
             yield batch
 
-    def _checkSize(self, texts):
+    def _check_size(self, texts):
         """ Checks that texts don't exceed memory limit. """
-        if sys.getsizeof(texts) >= self.maxBatchSize:
+        if sys.getsizeof(texts) >= self.max_batch_size:
             if len(texts) == 1:
-                raise ValueError("Given text is over {0} bytes, exceeds limit.".format(self.maxBatchSize))
-            raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.maxBatchSize))
+                raise ValueError("Given text is over {0} bytes, exceeds limit.".format(self.max_batch_size))
+            raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.max_batch_size))
         return True
