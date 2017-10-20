@@ -34,6 +34,6 @@ t = texterra.API('YOURKEY')
 ```python
 tags = t.pos_tagging('Hello World') 
 # You can also invoke Texterra with custom request: 
-result = t.custom_query(path, query) # for GET request 
-result = t.custom_query(path, query, form) # for POST request
+result = t.custom_query(path, params) # for GET request 
+result = t.custom_query(path, params, headers, json) # for POST request
 ```
