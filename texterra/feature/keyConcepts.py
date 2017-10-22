@@ -11,19 +11,17 @@ def process(document, rtype=None, api=None):
     if 'keyconcepts' in document['annotations']:
         ids, kbnames = [], []
         weights = {}
-        attributes = set()
         for entry in document['annotations'][annotationName]:
             for concept in entry['value']:
                 concept_id = concept['concept']['id']
                 kb_name = concept['concept']['kb-name']
-                attributes.add('url({0})'.format(kb_name[:2]))
                 ids.append(concept_id)
                 kbnames.append(kb_name)
                 weights['{0}:{1}'.format(concept_id, kb_name)] = concept['weight']
 
         if len(ids) > 0:
             concepts = []
-            atrs = api.get_attributes(ids, kbnames, list(attributes))
+            atrs = api._get_attributes(ids, kbnames, ['url'])
             for at in atrs:
                 concepts.append((weights[at], atrs[at]['url']))
             concepts.sort(key=lambda x: -x[0])

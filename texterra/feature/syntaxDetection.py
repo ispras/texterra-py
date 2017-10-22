@@ -1,4 +1,4 @@
-from .. import syntaxTree
+from .. import syntaxtree
 
 annotationName = 'syntax-relation'
 
@@ -9,6 +9,6 @@ def params():
 
 def process(document, rtype=None, api=None):
     if annotationName in document['annotations']:
-        return syntaxTree.SyntaxTree(document)
+        return syntaxtree.SyntaxTree(document)
     else:
         return None

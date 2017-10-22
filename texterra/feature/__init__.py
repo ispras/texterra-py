@@ -1,14 +1,14 @@
 from . import (
-    languageDetection,
-    sentenceDetection,
+    languagedetection,
+    sentencedetection,
     tokenization,
     lemmatization,
-    namedEntities,
-    posTagging,
+    namedentities,
+    postagging,
     disambiguation,
-    keyConcepts,
-    spellingCorrection,
-    subjectivityDetection,
-    polarityDetection,
-    syntaxDetection
+    keyconcepts,
+    spellingcorrection,
+    subjectivitydetection,
+    polaritydetection,
+    syntaxdetection
 )

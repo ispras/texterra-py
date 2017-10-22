@@ -1,32 +1,31 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from . import ispras
 from . import feature
+from . import util
 
 """
 A module containing standard NLP methods as well as tools for knowledge-base utilization.
 """
 
 
-class API(ispras.API):
+class API(object):
     """
     This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and
     custom queries.
     """
 
     # Default Texterra path
-    texterra_name = 'texterra'
-    texterra_version = 'v3.1'
+    api_url = 'http://api.ispras.ru/texterra/v3.1/'
     max_batch_size = 1000000
 
-    def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', False), ver=None,
-                 host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
+    def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', None), host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
         """ Provide only apikey to use default Texterra service name and version. """
-        if host is None:
-            ver = ver or API.texterra_version
-
-        super().__init__(key=key, name=API.texterra_name, ver=ver, host=host)
+        self.url = host or self.api_url
+        if key is not None and len(key) == 40:
+            self.apikey = key
+        else:
+            raise ValueError('Invalid API key. Please provide proper API key.')
 
     # NLP annotating methods
 
@@ -39,7 +38,7 @@ class API(ispras.API):
         :return: yields given texts' ISO 639-1 language codes
         :rtype: str generator
         """
-        return self.process_texts(texts, feature.languageDetection)
+        return self.process_texts(texts, feature.languagedetection)
 
     def sentence_detection(self, texts, rtype='full', domain='', language=''):
         """
@@ -59,7 +58,7 @@ class API(ispras.API):
         :return: yields lists of tuples, where tuple contains a sentence's start, end indexes and its value
         :rtype: generator of list(tuple(int, int, str))
         """
-        return self.process_texts(texts, feature.sentenceDetection, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.sentencedetection, rtype=rtype, domain=domain, language=language)
 
     def tokenization(self, texts, rtype='full', domain='', language=''):
         """
@@ -119,7 +118,7 @@ class API(ispras.API):
         :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, value, and tag
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.posTagging, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.postagging, rtype=rtype, domain=domain, language=language)
 
     def spelling_correction(self, texts, rtype='full', domain='', language=''):
         """
@@ -140,7 +139,7 @@ class API(ispras.API):
                 its value and correction
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.spellingCorrection, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.spellingcorrection, rtype=rtype, domain=domain, language=language)
 
     def named_entities(self, texts, rtype='full', domain='', language=''):
         """
@@ -160,7 +159,7 @@ class API(ispras.API):
                  BBN category
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.namedEntities, rtype=rtype, domain=domain, language=language)
+        return self.process_texts(texts, feature.namedentities, rtype=rtype, domain=domain, language=language)
 
     def disambiguation(self, texts, domain='', language=''):
         """
@@ -193,7 +192,7 @@ class API(ispras.API):
                 sorted by concept weight in descending order
         :rtype: generator of list(str)
         """
-        return self.process_texts(texts, feature.keyConcepts, domain=domain, language=language)
+        return self.process_texts(texts, feature.keyconcepts, domain=domain, language=language)
 
     def subjectivity_detection(self, texts, domain='', language=''):
         """
@@ -208,7 +207,7 @@ class API(ispras.API):
         :return: yields True for subjective texts, otherwise False.
         :rtype: bool generator
         """
-        return self.process_texts(texts, feature.subjectivityDetection, domain=domain, language=language)
+        return self.process_texts(texts, feature.subjectivitydetection, domain=domain, language=language)
 
     def polarity_detection(self, texts, domain='', language=''):
         """
@@ -225,7 +224,7 @@ class API(ispras.API):
         :return: yields tuples containing a text's polarity and domain.
         :rtype: generator of tuple(str, str)
         """
-        return self.process_texts(texts, feature.polarityDetection, domain=domain, language=language)
+        return self.process_texts(texts, feature.polaritydetection, domain=domain, language=language)
 
     def syntax_detection(self, sentences, domain='', language=''):
         """
@@ -240,9 +239,23 @@ class API(ispras.API):
         :return: yields a SyntaxTree instance for each sentence
         :rtype: generator of SyntaxTree
         """
-        return self.process_texts(sentences, feature.syntaxDetection, domain=domain, language=language)
+        return self.process_texts(sentences, feature.syntaxdetection, domain=domain, language=language)
 
     # Section of KBM methods
+
+    def representation_terms(self, text, term_candidates, feature_type=None):
+        """
+        Determines if Knowledge base contains the specified terms and computes features of the specified types for them.
+        The default for feature_type is ['commonness', 'info-measure'].
+        """
+        params = {'featureType': feature_type or ['commonness', 'info-measure']}
+        payload = {
+            'text': text,
+            'annotations': {
+                'term-candidate': term_candidates
+            }
+        }
+        return util.post(self._get_request_url('representation/terms'), self._get_request_params(params), json=payload)
 
     def _wrap_concepts(self, concepts, kbnames):
         """ Utility wrapper for matrix parameters """
@@ -254,21 +267,7 @@ class API(ispras.API):
         else:
             return 'id={0}:{1};'.format(concepts, kbnames)
 
-    def representation_terms(self, text, term_candidates, feature_type=None):
-        """
-        Determines if Knowledge base contains the specified terms and computes features of the specified types for them.
-        If no feature
-        """
-        params = {'featureType': feature_type or ['commonness', 'info-measure']}
-        payload = {
-            'text': text,
-            'annotations': {
-                'term-candidate': term_candidates
-            }
-        }
-        return self.post('representation/terms', params=params, json=payload, fmt='json')
-
-    def get_attributes(self, concepts, kbnames, atr_list=None, fmt='json'):
+    def _get_attributes(self, concepts, kbnames, atr_list=None):
         """
         Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
         Supported attributes:
@@ -283,21 +282,22 @@ class API(ispras.API):
             type - concept type
         """
         params = {'attribute': atr_list or []}
-        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbnames)), params, fmt=fmt)
+        return self.custom_query('walker/{}'.format(self._wrap_concepts(concepts, kbnames)), params)
 
     # Helper methods
 
-    def batch_query(self, texts, params=None):
-        """ Invoke custom batch request to Texterra. """
-        result = self.post('nlp', params, json=texts, fmt='json')
+    def batch_query(self, texts, params):
+        """ Invokes custom batch request to Texterra. Returns json. """
+        result = util.post(self._get_request_url('nlp'), self._get_request_params(params), json=texts)
         return result
 
-    def custom_query(self, path, params, headers=None, json=None, data=None, fmt='json'):
-        """ Invoke custom request to Texterra. """
+    def custom_query(self, path, params, headers=None, json=None, data=None):
+        """ Invokes custom request to Texterra. Returns json. """
         if data is not None or json is not None:
-            return self.post(path, params, headers=headers, json=json, data=data, fmt=fmt)
+            return util.post(self._get_request_url(path), self._get_request_params(params),
+                             headers=headers, json=json, data=data)
         else:
-            return self.get(path, params, fmt=fmt)
+            return util.get(self._get_request_url(path), self._get_request_params(params), headers=headers)
 
     def process_texts(self, texts, module, rtype=None, domain='', language=''):
         for batch in self._get_batches(texts):
@@ -336,3 +336,10 @@ class API(ispras.API):
                 raise ValueError("Given text is over {0} bytes, exceeds limit.".format(self.max_batch_size))
             raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.max_batch_size))
         return True
+
+    def _get_request_url(self, path):
+        return '{0}{1}'.format(self.api_url, path)
+
+    def _get_request_params(self, params):
+        params['apikey'] = self.apikey
+        return params

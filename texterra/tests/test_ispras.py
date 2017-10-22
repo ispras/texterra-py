@@ -16,21 +16,21 @@ load_dotenv(dotenv_path)
 # Texterra Tests
 
 class CustomTexterraAPITest(unittest.TestCase):
+
     def setUp(self):
         TEXTERRA_CUSTOM_HOST = os.getenv("TEXTERRA_CUSTOM_HOST")
         TEXTERRA_CUSTOM_KEY = os.getenv("TEXTERRA_CUSTOM_KEY")
         self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST, key=TEXTERRA_CUSTOM_KEY)
 
-    def test_custom_getAttributes(self):
-        self.assertIsInstance(self.custom_texterra.get_attributes(12, 'enwiki'), dict)
+    def test_custom_get_attributes(self):
+        self.assertIsInstance(self.custom_texterra._get_attributes(12, 'enwiki'), dict)
 
 
 class TexterraAPITest(unittest.TestCase):
+
     def setUp(self):
         TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
-        TEXTERRA_SERVICE_NAME = os.environ.get("TEXTERRA_SERVICE_NAME")
-        TEXTERRA_SERVICE_VERSION = os.environ.get("TEXTERRA_SERVICE_VERSION")
-        self.texterra = texterra.API(key=TEXTERRA_KEY, ver=TEXTERRA_SERVICE_VERSION)
+        self.texterra = texterra.API(key=TEXTERRA_KEY)
 
         self.en_text = 'Apple today updated iMac to bring numerous high-performance enhancements to the leading all-in-one desktop. iMac now features fourth-generation Intel Core processors, new graphics, and next-generation Wi-Fi. In addition, it now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation'
         self.ru_text = 'Первые в этом году переговоры министра иностранных дел России Сергея Лаврова и госсекретаря США Джона Керри, длившиеся 1,5 часа, завершились в Мюнхене.'
@@ -122,7 +122,7 @@ class TexterraAPITest(unittest.TestCase):
         for term in ru_result_expected:
             self.assertEqual(term in ru_result, True)
 
-    def test_syntaxDetection(self):
+    def test_syntax_detection(self):
         # test return type
         self.assertIsInstance(self.texterra.syntax_detection([self.ru_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.syntax_detection([self.en_text]), types.GeneratorType)
@@ -166,7 +166,7 @@ class TexterraAPITest(unittest.TestCase):
         self.assertEqual(ru_result.toString,
                          "(упадет/ROOT (Согласно/обст (прогнозу/предл официальному/опред (Минэкономразвития/квазиагент ,/PUNCT))) (ВВП/предик России/квазиагент) (на/2-компл (3%/предл ./PUNCT)))")
 
-    def test_languageDetectionAnnotate(self):
+    def test_language_detection(self):
         # test return type
         self.assertIsInstance(self.texterra.language_detection([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.language_detection([self.ru_text]), types.GeneratorType)
@@ -195,7 +195,7 @@ class TexterraAPITest(unittest.TestCase):
         self.assertEqual(lang_list[1], 'ru')
         self.assertEqual(lang_list[3], 'ru')
 
-    def test_sentenceDetection(self):
+    def test_sentence_detection(self):
         # test return type
         self.assertIsInstance(self.texterra.sentence_detection([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.sentence_detection([self.ru_text]), types.GeneratorType)
@@ -304,7 +304,7 @@ class TexterraAPITest(unittest.TestCase):
                               (73, 74, ".", "")]
         self.assertEqual(ru_result, ru_result_expected)
 
-    def test_posTagging(self):
+    def test_pos_tagging(self):
         # test return type
         self.assertIsInstance(self.texterra.pos_tagging([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.pos_tagging([self.ru_text]), types.GeneratorType)
@@ -351,7 +351,7 @@ class TexterraAPITest(unittest.TestCase):
                               (71, 73, "3%", "S"), (73, 74, ".", "PUNCT")]
         self.assertEqual(ru_result, ru_result_expected)
 
-    def test_namedEntities(self):
+    def test_named_entities(self):
         # test return type
         self.assertIsInstance(self.texterra.named_entities([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.named_entities([self.ru_text]), types.GeneratorType)
@@ -386,7 +386,7 @@ class TexterraAPITest(unittest.TestCase):
                               (54, 60, "России", "GPE_COUNTRY")]
         self.assertEqual(ru_result, ru_result_expected)
 
-    def test_subjectivityDetection(self):
+    def test_subjectivity_detection(self):
         # test return type
         self.assertIsInstance(self.texterra.subjectivity_detection([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.subjectivity_detection([self.ru_text]), types.GeneratorType)
@@ -410,7 +410,7 @@ class TexterraAPITest(unittest.TestCase):
         en_result_expected = True
         self.assertEqual(en_result, en_result_expected)
 
-    def test_polarityDetection(self):
+    def test_polarity_detection(self):
         # test return type
         self.assertIsInstance(self.texterra.polarity_detection([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.polarity_detection([self.ru_text]), types.GeneratorType)
@@ -434,7 +434,7 @@ class TexterraAPITest(unittest.TestCase):
         en_result_expected = "POSITIVE"
         self.assertEqual(en_result[0], en_result_expected)
 
-    def test_spellingCorrection(self):
+    def test_spelling_correction(self):
         # test return type
         self.assertIsInstance(self.texterra.spelling_correction([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.spelling_correction([self.ru_text]), types.GeneratorType)
@@ -473,9 +473,9 @@ class TexterraAPITest(unittest.TestCase):
         self.assertIsInstance(res['annotations']['commonness'], list)
         self.assertIsInstance(res['annotations']['info-measure'], list)
 
-    def test_getAttributes(self):
-        self.assertIsInstance(self.texterra.get_attributes(12, 'enwiki'), dict)
-        self.assertIsInstance(self.texterra.get_attributes([12, 13137], 'enwiki'), dict)
-        self.assertIsInstance(self.texterra.get_attributes(12, 'enwiki', ['url(en)', 'type']), dict)
-        self.assertIsInstance(self.texterra.get_attributes([12, 13137], 'enwiki', ['url(en)', 'title']), dict)
+    def test_get_attributes(self):
+        self.assertIsInstance(self.texterra._get_attributes(12, 'enwiki'), dict)
+        self.assertIsInstance(self.texterra._get_attributes([12, 13137], 'enwiki'), dict)
+        self.assertIsInstance(self.texterra._get_attributes(12, 'enwiki', ['url(en)', 'type']), dict)
+        self.assertIsInstance(self.texterra._get_attributes([12, 13137], 'enwiki', ['url(en)', 'title']), dict)
 
