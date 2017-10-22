@@ -1,4 +1,4 @@
-annotationName = ['domain', 'polarity']
+﻿annotationName = ['domain', 'polarity']
 
 
 def params():
