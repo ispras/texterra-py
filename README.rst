@@ -3,7 +3,7 @@ Texterra Python Interface
 
 This package provides a Python interface for Texterra API.
 Texterra is a toolkit for natural language processing and knowledge base utilization,
-developed by the Ivannikov Institute for System Programming.
+developed by a team of researchers at the Ivannikov Institute for System Programming.
 
 See https://texterra.ispras.ru for more information about Texterra project.
 
@@ -42,11 +42,11 @@ or you can install using pip::
 Documentation
 -------------
 
-You can use pydoc to list available services::
+You can use pydoc to get help on the package::
 
     pydoc texterra
 
-and check documentation of methods for each service::
+and check the documentation of methods::
 
     pydoc texterra.texterra
 
@@ -55,13 +55,12 @@ Usage
 -----
 
 To use Texterra API in your project, you first need to get an API key `here <https://api.ispras.ru/products>`_.
-
-After getting the API key, simply import the package and create an access object using your key::
+Then, import the package and use your API key to create an access object::
 
     import texterra
     t = texterra.API('YOURKEY')
 
-Just call the corresponding method to access different tools ::
+To access different tools, simply call the corresponding method::
 
     tags = t.pos_tagging('Hello World') 
     # You can also invoke Texterra with custom request:
