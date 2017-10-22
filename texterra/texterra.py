@@ -15,12 +15,15 @@ class API(object):
     custom queries.
     """
 
-    # Default Texterra path
+    # default texterra path
     api_url = 'http://api.ispras.ru/texterra/v3.1/'
     max_batch_size = 1000000
 
     def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', None), host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
-        """ Provide only apikey to use default Texterra service name and version. """
+        """
+        Provide an API key to use the default Texterra version (v3.1).
+        For a different version of Texterra, specify a custom host.
+        """
         self.url = host or self.api_url
         if key is not None and len(key) == 40:
             self.apikey = key
@@ -38,7 +41,7 @@ class API(object):
         :return: yields given texts' ISO 639-1 language codes
         :rtype: str generator
         """
-        return self.process_texts(texts, feature.languagedetection)
+        return self._process_texts(texts, feature.languagedetection)
 
     def sentence_detection(self, texts, rtype='full', domain='', language=''):
         """
@@ -58,7 +61,7 @@ class API(object):
         :return: yields lists of tuples, where tuple contains a sentence's start, end indexes and its value
         :rtype: generator of list(tuple(int, int, str))
         """
-        return self.process_texts(texts, feature.sentencedetection, rtype=rtype, domain=domain, language=language)
+        return self._process_texts(texts, feature.sentencedetection, rtype=rtype, domain=domain, language=language)
 
     def tokenization(self, texts, rtype='full', domain='', language=''):
         """
@@ -78,7 +81,7 @@ class API(object):
         :return: yields lists of tuples, where each tuple contains a token's start, end indexes and its value.
         :rtype: generator of list(tuple(int, int, str))
         """
-        return self.process_texts(texts, feature.tokenization, rtype=rtype, domain=domain, language=language)
+        return self._process_texts(texts, feature.tokenization, rtype=rtype, domain=domain, language=language)
 
     def lemmatization(self, texts, rtype='full', domain='', language=''):
         """
@@ -98,7 +101,7 @@ class API(object):
         :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, its value and lemma
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.lemmatization, rtype=rtype, domain=domain, language=language)
+        return self._process_texts(texts, feature.lemmatization, rtype=rtype, domain=domain, language=language)
 
     def pos_tagging(self, texts, rtype='full', domain='', language=''):
         """
@@ -118,7 +121,7 @@ class API(object):
         :return: yields lists of tuples, where each tuple contains a token’s start, end indexes, value, and tag
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.postagging, rtype=rtype, domain=domain, language=language)
+        return self._process_texts(texts, feature.postagging, rtype=rtype, domain=domain, language=language)
 
     def spelling_correction(self, texts, rtype='full', domain='', language=''):
         """
@@ -139,7 +142,7 @@ class API(object):
                 its value and correction
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.spellingcorrection, rtype=rtype, domain=domain, language=language)
+        return self._process_texts(texts, feature.spellingcorrection, rtype=rtype, domain=domain, language=language)
 
     def named_entities(self, texts, rtype='full', domain='', language=''):
         """
@@ -159,7 +162,7 @@ class API(object):
                  BBN category
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.namedentities, rtype=rtype, domain=domain, language=language)
+        return self._process_texts(texts, feature.namedentities, rtype=rtype, domain=domain, language=language)
 
     def disambiguation(self, texts, domain='', language=''):
         """
@@ -175,7 +178,7 @@ class API(object):
                  the corresponding article in KB.
         :rtype: generator of list(tuple(int, int, str, str))
         """
-        return self.process_texts(texts, feature.disambiguation, domain=domain, language=language)
+        return self._process_texts(texts, feature.disambiguation, domain=domain, language=language)
 
     def key_concepts(self, texts, domain='', language=''):
         """
@@ -192,7 +195,7 @@ class API(object):
                 sorted by concept weight in descending order
         :rtype: generator of list(str)
         """
-        return self.process_texts(texts, feature.keyconcepts, domain=domain, language=language)
+        return self._process_texts(texts, feature.keyconcepts, domain=domain, language=language)
 
     def subjectivity_detection(self, texts, domain='', language=''):
         """
@@ -207,7 +210,7 @@ class API(object):
         :return: yields True for subjective texts, otherwise False.
         :rtype: bool generator
         """
-        return self.process_texts(texts, feature.subjectivitydetection, domain=domain, language=language)
+        return self._process_texts(texts, feature.subjectivitydetection, domain=domain, language=language)
 
     def polarity_detection(self, texts, domain='', language=''):
         """
@@ -224,7 +227,7 @@ class API(object):
         :return: yields tuples containing a text's polarity and domain.
         :rtype: generator of tuple(str, str)
         """
-        return self.process_texts(texts, feature.polaritydetection, domain=domain, language=language)
+        return self._process_texts(texts, feature.polaritydetection, domain=domain, language=language)
 
     def syntax_detection(self, sentences, domain='', language=''):
         """
@@ -239,7 +242,7 @@ class API(object):
         :return: yields a SyntaxTree instance for each sentence
         :rtype: generator of SyntaxTree
         """
-        return self.process_texts(sentences, feature.syntaxdetection, domain=domain, language=language)
+        return self._process_texts(sentences, feature.syntaxdetection, domain=domain, language=language)
 
     # Section of KBM methods
 
@@ -299,7 +302,7 @@ class API(object):
         else:
             return util.get(self._get_request_url(path), self._get_request_params(params), headers=headers)
 
-    def process_texts(self, texts, module, rtype=None, domain='', language=''):
+    def _process_texts(self, texts, module, rtype=None, domain='', language=''):
         for batch in self._get_batches(texts):
             if len(batch) != 0:
                 params = module.params()
