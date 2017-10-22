@@ -54,18 +54,17 @@ and check documentation of methods for each service::
 Usage
 -----
 
-To use Texterra API in your project, simply import it like this:: 
+To use Texterra API in your project, you first need to get an API key `here <https://api.ispras.ru/products>`_.
+
+After getting the API key, simply import the package and create an access object using your key::
 
     import texterra
-
-Now you can create an access object using your API key::
-
     t = texterra.API('YOURKEY')
 
-To access different tools just call the corresponding method::
+Just call the corresponding method to access different tools ::
 
     tags = t.pos_tagging('Hello World') 
-    # You can also invoke Texterra with custom request: 
+    # You can also invoke Texterra with custom request:
     result = t.custom_query(path, params) # for GET request 
     result = t.custom_query(path, params, headers, json) # for POST request
 
