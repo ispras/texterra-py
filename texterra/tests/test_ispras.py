@@ -141,7 +141,7 @@ class TexterraAPITest(unittest.TestCase):
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, texterra.SyntaxTree)
-            self.assertIsInstance(entry.toString, str if sys.version_info[0] == 3 else basestring)
+            self.assertIsInstance(entry.to_string, str if sys.version_info[0] == 3 else basestring)
             self.assertEqual(len(entry.heads), len(entry.labels))
             self.assertEqual(0 in entry.heads, True)
             self.assertEqual('ROOT' in entry.labels, True)
@@ -150,20 +150,20 @@ class TexterraAPITest(unittest.TestCase):
         en_test_sent = "Our kids should grow up in an America where opportunity is real."
         en_result = next(self.texterra.syntax_detection([en_test_sent]))
         self.assertIsInstance(en_result, texterra.SyntaxTree)
-        self.assertEqual(en_result.getLabels(),
+        self.assertEqual(en_result.get_labels(),
                          ["advmod", "nsubj", "dep", "ROOT", "advmod", "prep", "det", "pobj", "punct", "nsubj",
                           "cop", "rcmod", "dep"])
-        self.assertEqual(en_result.toString,
+        self.assertEqual(en_result.to_string,
                          "(grow/ROOT Our/advmod kids/nsubj should/dep up/advmod (in/prep (America/pobj an/det (real/rcmod where/punct opportunity/nsubj is/cop ./dep))))")
 
         # test russian
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
         ru_result = next(self.texterra.syntax_detection([ru_test_sent]))
         self.assertIsInstance(ru_result, texterra.SyntaxTree)
-        self.assertEqual(ru_result.getLabels(),
+        self.assertEqual(ru_result.get_labels(),
                          ["обст", "опред", "предл", "квазиагент", "PUNCT", "предик", "квазиагент", "ROOT", "2-компл",
                           "предл", "PUNCT"])
-        self.assertEqual(ru_result.toString,
+        self.assertEqual(ru_result.to_string,
                          "(упадет/ROOT (Согласно/обст (прогнозу/предл официальному/опред (Минэкономразвития/квазиагент ,/PUNCT))) (ВВП/предик России/квазиагент) (на/2-компл (3%/предл ./PUNCT)))")
 
     def test_language_detection(self):

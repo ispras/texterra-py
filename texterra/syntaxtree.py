@@ -51,14 +51,14 @@ class SyntaxTree(object):
         root_span = self.spans[root_index]
         self.visited = [root_index]
         self.tree = {}
-        self.tree[(root_span[0], root_span[1], self.tokens[root_index], 'ROOT')], s = self._buildTree(root_index)
-        self.toString = s
+        self.tree[(root_span[0], root_span[1], self.tokens[root_index], 'ROOT')], s = self._build_tree(root_index)
+        self.to_string = s
 
-    def getLabels(self):
+    def get_labels(self):
         """ Returns the list of each token's dependency type from its head. """
         return self.labels[1:]
 
-    def getHeads(self):
+    def get_heads(self):
         """
         Returns the list of indexes of each token's head element.
         In the returned list, '1' corresponds to the first token in the sentence, and
@@ -66,7 +66,7 @@ class SyntaxTree(object):
         """
         return self.heads[1:]
 
-    def _buildTree(self, index):
+    def _build_tree(self, index):
         """
         Traverses the elements and recursively adds children of element at index to the tree.
 
@@ -81,7 +81,7 @@ class SyntaxTree(object):
             if i not in self.visited and self.heads[i] == index:
                 self.visited.append(i)
                 child_tree = {}
-                c, s = self._buildTree(i)
+                c, s = self._build_tree(i)
                 child_tree[(self.spans[i][0], self.spans[i][1], self.tokens[i], self.labels[i])] = c
                 children.append(child_tree)
                 to_string += u' {0}'.format(s)
