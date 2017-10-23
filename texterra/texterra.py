@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
+"""
+Tools for Natural Language Processing.
+"""
 import os
 import sys
 from . import feature
-from . import util
-
-"""
-A module containing standard NLP methods as well as tools for knowledge-base utilization.
-"""
+from . import ispras
 
 
-class API(object):
+class API(ispras.API):
     """
-    This class provides methods to work with Texterra REST via OpenAPI, including NLP and EKB methods and
-    custom queries.
+    This class provides methods to work with Texterra REST via OpenAPI, including NLP and custom queries.
     """
 
     # default texterra path
@@ -24,11 +22,7 @@ class API(object):
         Provide an API key to use the default Texterra version (v3.1).
         For a different version of Texterra, specify a custom host.
         """
-        self.url = host or self.api_url
-        if key is not None and len(key) == 40:
-            self.apikey = key
-        else:
-            raise ValueError('Invalid API key. Please provide proper API key.')
+        super(API, self).__init__(key=key, host=host or self.api_url)
 
     # NLP annotating methods
 
@@ -258,7 +252,7 @@ class API(object):
                 'term-candidate': term_candidates
             }
         }
-        return util.post(self._get_request_url('representation/terms'), self._get_request_params(params), json=payload)
+        return self.post(self._get_request_url('representation/terms'), self._get_request_params(params), json=payload)
 
     def _wrap_concepts(self, concepts, kbnames):
         """ Utility wrapper for matrix parameters """
@@ -291,16 +285,16 @@ class API(object):
 
     def batch_query(self, texts, params):
         """ Invokes custom batch request to Texterra. Returns json. """
-        result = util.post(self._get_request_url('nlp'), self._get_request_params(params), json=texts)
+        result = self.post(self._get_request_url('nlp'), self._get_request_params(params), json=texts)
         return result
 
     def custom_query(self, path, params, headers=None, json=None, data=None):
         """ Invokes custom request to Texterra. Returns json. """
         if data is not None or json is not None:
-            return util.post(self._get_request_url(path), self._get_request_params(params),
+            return self.post(self._get_request_url(path), self._get_request_params(params),
                              headers=headers, json=json, data=data)
         else:
-            return util.get(self._get_request_url(path), self._get_request_params(params), headers=headers)
+            return self.get(self._get_request_url(path), self._get_request_params(params), headers=headers)
 
     def _process_texts(self, texts, module, rtype=None, domain='', language=''):
         for batch in self._get_batches(texts):
