@@ -25,7 +25,7 @@ class SyntaxTree(object):
         """
         Receives a texterra-annotated text and initializes the syntax tree.
         """
-        self.tokens = [u'ROOT']  # initially has only root element
+        self.tokens = ['ROOT']  # initially has only root element
         self.spans = [None]
         self.heads = [None]  # root has no head element
         self.labels = [None]  # root has no head element => no label
@@ -74,7 +74,7 @@ class SyntaxTree(object):
         """
 
         children = []
-        to_string = u'({0}/{1}'.format(self.tokens[index], self.labels[index])
+        to_string = '({0}/{1}'.format(self.tokens[index], self.labels[index])
 
         for i in range(1, len(self.tokens)):
 
@@ -84,10 +84,10 @@ class SyntaxTree(object):
                 c, s = self._build_tree(i)
                 child_tree[(self.spans[i][0], self.spans[i][1], self.tokens[i], self.labels[i])] = c
                 children.append(child_tree)
-                to_string += u' {0}'.format(s)
+                to_string += ' {0}'.format(s)
 
         if len(children) > 0:
-            to_string += u')'
+            to_string += ')'
             return children, to_string
         else:
             return children, to_string[1:]
