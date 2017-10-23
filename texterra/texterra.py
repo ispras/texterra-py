@@ -14,12 +14,12 @@ class API(ispras.API):
     """
 
     # default texterra path
-    api_url = 'http://api.ispras.ru/texterra/v1/'
+    api_url = 'http://api.ispras.ru/texterra/v3.1/'
     max_batch_size = 1000000
 
     def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', None), host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
         """
-        Provide an API key to use the default Texterra version (v1).
+        Provide an API key to use the default Texterra version (v3.1).
         For a different version of Texterra, specify a custom host.
         """
         super(API, self).__init__(key=key, host=host or self.api_url)
