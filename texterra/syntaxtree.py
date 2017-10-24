@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 class SyntaxTree(object):
     """
     Implements a sentence's dependency parse tree.

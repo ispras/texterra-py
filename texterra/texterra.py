@@ -4,6 +4,7 @@ Tools for Natural Language Processing.
 """
 import os
 import sys
+import six
 from . import feature
 from . import ispras
 
@@ -312,7 +313,7 @@ class API(ispras.API):
 
     def _get_batches(self, texts):
         """ Reads texts from iterator and yield in 1MB-size batches."""
-        if isinstance(texts, str):
+        if isinstance(texts, six.string_types):
             self._check_size([texts])
             yield [{'text': texts}]
         else:
