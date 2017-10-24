@@ -238,24 +238,25 @@ class TexterraAPITest(unittest.TestCase):
                                "Состав, синтаксис, ассоциативность и приоритет операций достаточно привычны для языков программирования и призваны минимизировать употребление скобок.")]
         self.assertEqual(ru_result, ru_result_expected)
 
-    # def test_tokenization(self):
-    #     # test return type
-    #     self.assertIsInstance(self.texterra.tokenization([self.en_text]), types.GeneratorType)
-    #     self.assertIsInstance(self.texterra.tokenization([self.ru_text]), types.GeneratorType)
-    #     self.assertIsInstance(self.texterra.tokenization([self.en_tweet]), types.GeneratorType)
-    #     self.assertIsInstance(self.texterra.tokenization([self.ru_tweet]), types.GeneratorTypeict)
-    #
-    #     # test entry types
-    #     texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
-    #     for text in texts:
-    #         for entry in self.texterra.tokenization([text]):
-    #             self.assertIsInstance(entry, list)
-    #
-    #     # test batch
-    #     result = self.texterra.tokenization(texts)
-    #     self.assertIsInstance(result, types.GeneratorType)
-    #     for entry in result:
-    #         self.assertIsInstance(entry, list)
+    @unittest.skip("Backend bug")
+    def test_tokenization(self):
+        # test return type
+        self.assertIsInstance(self.texterra.tokenization([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.tokenization([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.tokenization([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.tokenization([self.ru_tweet]), types.GeneratorTypeict)
+
+        # test entry types
+        texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
+        for text in texts:
+            for entry in self.texterra.tokenization([text]):
+                self.assertIsInstance(entry, list)
+
+        # test batch
+        result = self.texterra.tokenization(texts)
+        self.assertIsInstance(result, types.GeneratorType)
+        for entry in result:
+            self.assertIsInstance(entry, list)
 
     def test_lemmatization(self):
         # test return type
