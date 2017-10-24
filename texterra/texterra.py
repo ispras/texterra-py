@@ -23,12 +23,7 @@ class API(ispras.API):
         Provide an API key to use the default Texterra version (v1).
         For a different version of Texterra, specify a custom host.
         """
-        key = key or os.getenv('TEXTERRA_CUSTOM_KEY', None)
-        host = host or os.getenv('TEXTERRA_CUSTOM_HOST', None)
-        if host is None:
-            super(API, self).__init__(key=key, name=API.texterra_name, ver=API.texterra_version)
-        else:
-            super(API, self).__init__(key=key, host=host)
+        super(API, self).__init__(key=key, name=API.texterra_name, ver=API.texterra_version, host=host)
 
     # NLP annotating methods
 
