@@ -36,6 +36,10 @@ class TexterraAPITest(unittest.TestCase):
         self.en_tweet = 'mentioning veterens care which Mccain has voted AGAINST - SUPER GOOOOD point Obama+1 #tweetdebate'
         self.ru_tweet = 'В мастерской готовят пушку и автомобили 1940-х годов, для участия в Параде Победы в Ново-Переделкино.'
 
+    def test_bad_key(self):
+        with self.assertRaises(ValueError):
+            texterra.API('too short')
+
     def test_key_concepts(self):
         # test return type
         self.assertIsInstance(self.texterra.key_concepts([self.en_text]), types.GeneratorType)
