@@ -7,21 +7,19 @@ import texterra
 import types
 import sys
 import six
-import os
-from os.path import join, dirname, abspath
-from dotenv import load_dotenv
 
-dotenv_path = join(dirname(__file__), '..', '..', '.env')
-load_dotenv(dotenv_path)
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
+from os import getenv, environ
 
 # Texterra Tests
 
 class CustomTexterraAPITest(unittest.TestCase):
 
     def setUp(self):
-        TEXTERRA_CUSTOM_HOST = os.getenv("TEXTERRA_CUSTOM_HOST")
-        TEXTERRA_CUSTOM_KEY = os.getenv("TEXTERRA_CUSTOM_KEY")
+        TEXTERRA_CUSTOM_HOST = getenv("TEXTERRA_CUSTOM_HOST")
+        TEXTERRA_CUSTOM_KEY = getenv("TEXTERRA_CUSTOM_KEY")
         self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST, key=TEXTERRA_CUSTOM_KEY)
 
     def test_custom_get_attributes(self):
@@ -31,7 +29,7 @@ class CustomTexterraAPITest(unittest.TestCase):
 class TexterraAPITest(unittest.TestCase):
 
     def setUp(self):
-        TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
+        TEXTERRA_KEY = environ.get("TEXTERRA_KEY")
         self.texterra = texterra.API(key=TEXTERRA_KEY)
 
         self.en_text = 'Apple today updated iMac to bring numerous high-performance enhancements to the leading all-in-one desktop. iMac now features fourth-generation Intel Core processors, new graphics, and next-generation Wi-Fi. In addition, it now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation'
