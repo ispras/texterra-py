@@ -2,26 +2,22 @@
 from __future__ import unicode_literals
 
 import unittest
-import requests
 import texterra
 import types
-import sys
+import six
 
-import os
-from os.path import join, dirname, abspath
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
-dotenv_path = join(dirname(__file__), '..', '..', '.env')
-load_dotenv(dotenv_path)
-
+from os import getenv, environ
 
 # Texterra Tests
 
 class CustomTexterraAPITest(unittest.TestCase):
 
     def setUp(self):
-        TEXTERRA_CUSTOM_HOST = os.getenv("TEXTERRA_CUSTOM_HOST")
-        TEXTERRA_CUSTOM_KEY = os.getenv("TEXTERRA_CUSTOM_KEY")
+        TEXTERRA_CUSTOM_HOST = getenv("TEXTERRA_CUSTOM_HOST")
+        TEXTERRA_CUSTOM_KEY = getenv("TEXTERRA_CUSTOM_KEY")
         self.custom_texterra = texterra.API(host=TEXTERRA_CUSTOM_HOST, key=TEXTERRA_CUSTOM_KEY)
 
     def test_custom_get_attributes(self):
@@ -31,7 +27,7 @@ class CustomTexterraAPITest(unittest.TestCase):
 class TexterraAPITest(unittest.TestCase):
 
     def setUp(self):
-        TEXTERRA_KEY = os.environ.get("TEXTERRA_KEY")
+        TEXTERRA_KEY = environ.get("TEXTERRA_KEY")
         self.texterra = texterra.API(key=TEXTERRA_KEY)
 
         self.en_text = 'Apple today updated iMac to bring numerous high-performance enhancements to the leading all-in-one desktop. iMac now features fourth-generation Intel Core processors, new graphics, and next-generation Wi-Fi. In addition, it now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation'
@@ -55,7 +51,7 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(entry, list)
                 entry_concepts = []
                 for concept in entry:
-                    self.assertIsInstance(concept, str if sys.version_info[0] == 3 else basestring)
+                    self.assertIsInstance(concept, six.string_types)
                     entry_concepts.append(concept)
                 concepts.append(entry_concepts)
 
@@ -65,7 +61,7 @@ class TexterraAPITest(unittest.TestCase):
         for entry in result:
             self.assertIsInstance(entry, list)
             for concept in entry:
-                self.assertIsInstance(concept, str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(concept, six.string_types)
 
         # test memory limit on large text
         try:
@@ -102,8 +98,8 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertEqual(len(term), 4)
                 self.assertIsInstance(term[0], int)
                 self.assertIsInstance(term[1], int)
-                self.assertIsInstance(term[2], str if sys.version_info[0] == 3 else basestring)
-                self.assertIsInstance(term[3], str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(term[2], six.string_types)
+                self.assertIsInstance(term[3], six.string_types)
 
         # test english
         en_test_text = "iMac now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation."
@@ -143,7 +139,7 @@ class TexterraAPITest(unittest.TestCase):
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
             self.assertIsInstance(entry, texterra.SyntaxTree)
-            self.assertIsInstance(entry.to_string, str if sys.version_info[0] == 3 else basestring)
+            self.assertIsInstance(entry.to_string, six.string_types)
             self.assertEqual(len(entry.heads), len(entry.labels))
             self.assertEqual(0 in entry.heads, True)
             self.assertEqual('ROOT' in entry.labels, True)
@@ -180,13 +176,13 @@ class TexterraAPITest(unittest.TestCase):
         # test for a single text
         for text in texts:
             for entry in self.texterra.language_detection(text):
-                self.assertIsInstance(entry, str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(entry, six.string_types)
 
         # test for text iterator
         result = self.texterra.language_detection(texts)
         self.assertIsInstance(result, types.GeneratorType)
         for entry in result:
-            self.assertIsInstance(entry, str if sys.version_info[0] == 3 else basestring)
+            self.assertIsInstance(entry, six.string_types)
 
         # test english
         lang_list = list(self.texterra.language_detection(texts))
@@ -220,7 +216,7 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(sentence, tuple)
                 self.assertIsInstance(sentence[0], int)
                 self.assertIsInstance(sentence[1], int)
-                self.assertIsInstance(sentence[2], str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(sentence[2], six.string_types)
 
         # test english
         en_test_text = "If you've never tried it, I think it's an interesting exercise to do without the Python semantics. It does make you appreciate what the language is providing."
@@ -238,24 +234,25 @@ class TexterraAPITest(unittest.TestCase):
                                "Состав, синтаксис, ассоциативность и приоритет операций достаточно привычны для языков программирования и призваны минимизировать употребление скобок.")]
         self.assertEqual(ru_result, ru_result_expected)
 
-    # def test_tokenization(self):
-    #     # test return type
-    #     self.assertIsInstance(self.texterra.tokenization([self.en_text]), types.GeneratorType)
-    #     self.assertIsInstance(self.texterra.tokenization([self.ru_text]), types.GeneratorType)
-    #     self.assertIsInstance(self.texterra.tokenization([self.en_tweet]), types.GeneratorType)
-    #     self.assertIsInstance(self.texterra.tokenization([self.ru_tweet]), types.GeneratorTypeict)
-    #
-    #     # test entry types
-    #     texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
-    #     for text in texts:
-    #         for entry in self.texterra.tokenization([text]):
-    #             self.assertIsInstance(entry, list)
-    #
-    #     # test batch
-    #     result = self.texterra.tokenization(texts)
-    #     self.assertIsInstance(result, types.GeneratorType)
-    #     for entry in result:
-    #         self.assertIsInstance(entry, list)
+    @unittest.skip("Backend bug")
+    def test_tokenization(self):
+        # test return type
+        self.assertIsInstance(self.texterra.tokenization([self.en_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.tokenization([self.ru_text]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.tokenization([self.en_tweet]), types.GeneratorType)
+        self.assertIsInstance(self.texterra.tokenization([self.ru_tweet]), types.GeneratorTypeict)
+
+        # test entry types
+        texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
+        for text in texts:
+            for entry in self.texterra.tokenization([text]):
+                self.assertIsInstance(entry, list)
+
+        # test batch
+        result = self.texterra.tokenization(texts)
+        self.assertIsInstance(result, types.GeneratorType)
+        for entry in result:
+            self.assertIsInstance(entry, list)
 
     def test_lemmatization(self):
         # test return type
@@ -280,8 +277,8 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(lemma, tuple)
                 self.assertIsInstance(lemma[0], int)
                 self.assertIsInstance(lemma[1], int)
-                self.assertIsInstance(lemma[2], str if sys.version_info[0] == 3 else basestring)
-                self.assertIsInstance(lemma[3], str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(lemma[2], six.string_types)
+                self.assertIsInstance(lemma[3], six.string_types)
 
         en_test_sent = "Our kids should grow up in an America where opportunity is real."
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
@@ -329,8 +326,8 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(pos_token, tuple)
                 self.assertIsInstance(pos_token[0], int)
                 self.assertIsInstance(pos_token[1], int)
-                self.assertIsInstance(pos_token[2], str if sys.version_info[0] == 3 else basestring)
-                self.assertIsInstance(pos_token[3], str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(pos_token[2], six.string_types)
+                self.assertIsInstance(pos_token[3], six.string_types)
 
         en_test_sent = "Our kids should grow up in an America where opportunity is real."
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
@@ -459,8 +456,8 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(spelling_token, tuple)
                 self.assertIsInstance(spelling_token[0], int)
                 self.assertIsInstance(spelling_token[1], int)
-                self.assertIsInstance(spelling_token[2], str if sys.version_info[0] == 3 else basestring)
-                self.assertIsInstance(spelling_token[3], str if sys.version_info[0] == 3 else basestring)
+                self.assertIsInstance(spelling_token[2], six.string_types)
+                self.assertIsInstance(spelling_token[3], six.string_types)
 
     def test_representation_terms(self):
         term_candidates = [
