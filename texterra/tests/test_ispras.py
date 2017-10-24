@@ -2,10 +2,8 @@
 from __future__ import unicode_literals
 
 import unittest
-import requests
 import texterra
 import types
-import sys
 import six
 
 from dotenv import load_dotenv, find_dotenv
