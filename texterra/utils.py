@@ -20,7 +20,7 @@ class HttpBase(object):
         return self.custom_query(path, params)
 
     def post(self, path, params, json):
-        """ Method for invoking ISPRAS API POST request """
+        """ Method for invoking API POST request """
         return self.custom_query(path, params, json)
 
     def custom_query(self, path, params, json=None):
