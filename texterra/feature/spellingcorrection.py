@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 annotationName = 'spelling-correction-token'
 
 

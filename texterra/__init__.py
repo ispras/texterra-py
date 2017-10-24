@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This package provides a Python interface for Texterra API.
 Texterra is a toolkit for natural language processing and knowledge base utilization,

@@ -1,4 +1,5 @@
-﻿annotationName = ['domain', 'polarity']
+﻿# -*- coding: utf-8 -*-
+annotationName = ['domain', 'polarity']
 
 
 def params():

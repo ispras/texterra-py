@@ -22,6 +22,7 @@ setup(
                  'Operating System :: OS Independent',
                  'Natural Language :: English',
                  'Natural Language :: Russian',
+                 'Programming Language :: Python :: 2',
                  'Programming Language :: Python :: 3'
                  ],
     author="Tsolak Ghukasyan",
@@ -31,6 +32,5 @@ setup(
         'requests',
         'xmltodict'
     ],
-    py_modules=['texterra'],
-    python_requires=">=3"
+    py_modules=['texterra']
 )
