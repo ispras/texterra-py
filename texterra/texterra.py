@@ -14,15 +14,21 @@ class API(ispras.API):
     """
 
     # default texterra path
-    api_url = 'http://api.ispras.ru/texterra/v1/'
+    texterra_name = 'texterra'
+    texterra_version = 'v1'
     max_batch_size = 1000000
 
-    def __init__(self, key=os.getenv('TEXTERRA_CUSTOM_KEY', None), host=os.getenv('TEXTERRA_CUSTOM_HOST', None)):
+    def __init__(self, key=None, host=None):
         """
         Provide an API key to use the default Texterra version (v1).
         For a different version of Texterra, specify a custom host.
         """
-        super(API, self).__init__(key=key, host=host or self.api_url)
+        key = key or os.getenv('TEXTERRA_CUSTOM_KEY', None)
+        host = host or os.getenv('TEXTERRA_CUSTOM_HOST', None)
+        if host is None:
+            super(API, self).__init__(key=key, name=API.texterra_name, ver=API.texterra_version)
+        else:
+            super(API, self).__init__(key=key, host=host)
 
     # NLP annotating methods
 
@@ -252,7 +258,7 @@ class API(ispras.API):
                 'term-candidate': term_candidates
             }
         }
-        return self.post(self._get_request_url('representation/terms'), self._get_request_params(params), json=payload)
+        return self.post('representation/terms', self._get_request_params(params), json=payload)
 
     def _wrap_concepts(self, concepts, kbnames):
         """ Utility wrapper for matrix parameters """
@@ -285,16 +291,15 @@ class API(ispras.API):
 
     def batch_query(self, texts, params):
         """ Invokes custom batch request to Texterra. Returns json. """
-        result = self.post(self._get_request_url('nlp'), self._get_request_params(params), json=texts)
+        result = self.post('nlp', params, json=texts)
         return result
 
     def custom_query(self, path, params, headers=None, json=None, data=None):
         """ Invokes custom request to Texterra. Returns json. """
         if data is not None or json is not None:
-            return self.post(self._get_request_url(path), self._get_request_params(params),
-                             headers=headers, json=json, data=data)
+            return self.post(path, params, headers=headers, json=json, data=data)
         else:
-            return self.get(self._get_request_url(path), self._get_request_params(params), headers=headers)
+            return self.get(path, params, headers=headers)
 
     def _process_texts(self, texts, module, rtype=None, domain='', language=''):
         for batch in self._get_batches(texts):
@@ -334,9 +339,3 @@ class API(ispras.API):
             raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.max_batch_size))
         return True
 
-    def _get_request_url(self, path):
-        return '{0}{1}'.format(self.api_url, path)
-
-    def _get_request_params(self, params):
-        params['apikey'] = self.apikey
-        return params
