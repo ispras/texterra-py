@@ -37,6 +37,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'requests',
+        'six'
     ],
     py_modules=['texterra']
 )
