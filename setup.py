@@ -1,13 +1,20 @@
 from setuptools import setup, find_packages
+from os import path
+
+here = path.abspath(path.dirname(__file__))
+
+# Read the long description from the README file
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name="texterra",
-    desciption="API for natural language processing.",
     version='1.0.0',
+    desciption="API for natural language processing.",
+    long_description=long_description,
     url="https://texterra.ispras.ru",
-    long_description="""Texterra API provides tools for natural language processing and knowledge base utilization.""",
     license="Apache License, Version 2.0",
-    keywords=['natural language processing', 'text processing', 'parsing', 'tagging', 'tokenizing', 'syntax',
+    keywords=['natural language processing', 'nlp', 'text processing', 'parsing', 'tagging', 'tokenizing', 'syntax',
               'language', 'lemmatization', 'named entity recognition', 'spelling correction', 'sentiment analysis',
               'disambiguation', 'key concepts detection'],
     classifiers=['Intended Audience :: Science/Research',
