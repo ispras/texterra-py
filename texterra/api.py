@@ -16,7 +16,7 @@ class API(utils.HttpBase):
 
     # default texterra path
     texterra_version = 'v1'
-    texterra_url = 'http://api.ispras.ru/texterra/{0}/'.format(texterra_version)
+    texterra_url = 'https://api.ispras.ru/texterra/{0}/'.format(texterra_version)
 
     max_batch_size = 1000000
 
