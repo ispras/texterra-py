@@ -30,7 +30,6 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'requests',
-        'xmltodict'
     ],
     py_modules=['texterra']
 )

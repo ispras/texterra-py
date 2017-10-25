@@ -241,60 +241,6 @@ class API(ispras.API):
 
     # Section of KBM methods
 
-    def representation_terms(self, text, term_candidates, features=None):
-        """
-        Determines if knowledge base contains the specified terms and computes features of the specified types for them.
-        The default for feature_type is ['commonness', 'info-measure'].
-
-        :param text: the text containing the terms
-        :type text: str
-        :param term_candidates: terms' index spans in the text
-        :type term_candidates: list(tuple(int, int))
-        :param features: term features to compute. By default, term commonness ('commonness') and
-               specificity ('info-measure') are computed.
-        :type feature_type: list(str)
-        :return:
-        :rtype:
-        """
-        params = {'featureType': features or ['commonness', 'info-measure']}
-        payload = {
-            'text': text,
-            'annotations': {
-                'term-candidate': [(candidate['start'], candidate['end']) for candidate in term_candidates]
-            }
-        }
-        annotations = self.post('representation/terms', params, json=payload)['annotations']
-        result = {}
-        for feat in features:
-            if feat in annotations:
-                print(feat, 2)
-                for entry in annotations[feat]:
-                    if feat == 'info-measure':
-                        value = entry['value']
-                    elif feat == 'commonness':
-                        value = []
-                        concept_ids = []
-                        kb_names = []
-                        commonness = {}
-                        for concept in entry['value']:
-                            concept_ids.append(concept['meaning']['id'])
-                            kb_names.append(concept['meaning']['kb-name'])
-                            commonness['{0}:{1}'.format(concept['meaning']['id'], concept['meaning']['kb-name'])] = \
-                                concept['commonness']
-
-                        if len(concept_ids) > 0:
-                            atrs = self._get_attributes(concept_ids, kb_names, ['url'])
-                            for at in atrs:
-                                value.append((atrs[at]['url'], commonness[at]))
-                    elif feat == 'term':
-                        value = True
-                    try:
-                        result[(entry['start'], entry['end'])][feat] = value
-                    except KeyError:
-                        result[(entry['start'], entry['end'])] = {feat: value}
-
-        return result
-
     def _wrap_concepts(self, concepts, kbnames):
         """ Utility wrapper for matrix parameters """
         if isinstance(concepts, list):
