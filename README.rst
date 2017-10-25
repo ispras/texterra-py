@@ -30,11 +30,15 @@ Currently, 2 languages are supported: English and Russian.
 Installation
 ------------
 
-To install this SDK run::
+To install this SDK run:
+
+.. code:: bash
 
     python setup.py install
 
-or you can install using pip::
+or you can install using pip:
+
+.. code:: bash
 
     pip install texterra
 
@@ -42,25 +46,33 @@ or you can install using pip::
 Documentation
 -------------
 
-You can use pydoc to get help on the package::
+You can use pydoc to get help on the package:
+
+.. code:: bash
 
     pydoc texterra
 
-and check the documentation of methods::
+and check the documentation of methods:
 
-    pydoc texterra.texterra
+.. code:: bash
+
+    pydoc texterra.api
 
 
 Usage
 -----
 
 To use Texterra API in your project, you first need to get an API key `here <https://api.ispras.ru/products>`_.
-Then, import the package and use your API key to create an access object::
+Then, ``import`` the package and use your API key to create an access object:
+
+.. code:: python
 
     import texterra
     t = texterra.API('YOURKEY')
 
-To access different tools, simply call the corresponding method::
+To access different tools, simply call the corresponding method:
+
+.. code:: python
 
     tags = t.pos_tagging('Hello World') 
     # You can also invoke Texterra with custom request:
