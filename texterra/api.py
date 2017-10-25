@@ -2,9 +2,9 @@
 """
 Tools for Natural Language Processing.
 """
-import os
 import sys
 import six
+from os import getenv
 from . import feature
 from . import utils
 
@@ -20,7 +20,7 @@ class API(utils.HttpBase):
 
     max_batch_size = 1000000
 
-    def __init__(self, key=os.getenv('TEXTERRA_KEY', False), host=os.getenv('TEXTERRA_HOST', None)):
+    def __init__(self, key=getenv('TEXTERRA_KEY', False), host=getenv('TEXTERRA_HOST', None)):
         """
         Provide an API key to use the default Texterra version (v1).
         For a different version of Texterra, specify a custom host.
