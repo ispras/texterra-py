@@ -6,7 +6,7 @@ developed by a team of researchers at the Ivannikov Institute for System Program
 
 See https://texterra.ispras.ru for more information about Texterra project.
 """
-from .texterra import API
+from .api import API
 from .syntaxtree import SyntaxTree
 
 __version__ = '1.0.0'

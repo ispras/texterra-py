@@ -9,7 +9,7 @@ import six
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
-from os import getenv, environ
+from os import getenv
 
 
 # Texterra Tests
@@ -28,13 +28,17 @@ class CustomTexterraAPITest(unittest.TestCase):
 class TexterraAPITest(unittest.TestCase):
 
     def setUp(self):
-        TEXTERRA_KEY = environ.get("TEXTERRA_KEY")
+        TEXTERRA_KEY = getenv("TEXTERRA_KEY")
         self.texterra = texterra.API(key=TEXTERRA_KEY)
 
         self.en_text = 'Apple today updated iMac to bring numerous high-performance enhancements to the leading all-in-one desktop. iMac now features fourth-generation Intel Core processors, new graphics, and next-generation Wi-Fi. In addition, it now supports PCIe-based flash storage, making its Fusion Drive and all-flash storage options up to 50 percent faster than the previous generation'
         self.ru_text = 'Первые в этом году переговоры министра иностранных дел России Сергея Лаврова и госсекретаря США Джона Керри, длившиеся 1,5 часа, завершились в Мюнхене.'
         self.en_tweet = 'mentioning veterens care which Mccain has voted AGAINST - SUPER GOOOOD point Obama+1 #tweetdebate'
         self.ru_tweet = 'В мастерской готовят пушку и автомобили 1940-х годов, для участия в Параде Победы в Ново-Переделкино.'
+
+    def test_bad_key(self):
+        with self.assertRaises(ValueError):
+            texterra.API('too short')
 
     def test_key_concepts(self):
         # test return type
