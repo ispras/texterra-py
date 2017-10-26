@@ -236,13 +236,12 @@ class TexterraAPITest(unittest.TestCase):
                                "Состав, синтаксис, ассоциативность и приоритет операций достаточно привычны для языков программирования и призваны минимизировать употребление скобок.")]
         self.assertEqual(ru_result, ru_result_expected)
 
-    @unittest.skip("Backend bug")
     def test_tokenization(self):
         # test return type
         self.assertIsInstance(self.texterra.tokenization([self.en_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.tokenization([self.ru_text]), types.GeneratorType)
         self.assertIsInstance(self.texterra.tokenization([self.en_tweet]), types.GeneratorType)
-        self.assertIsInstance(self.texterra.tokenization([self.ru_tweet]), types.GeneratorTypeict)
+        self.assertIsInstance(self.texterra.tokenization([self.ru_tweet]), types.GeneratorType)
 
         # test entry types
         texts = [self.en_text, self.ru_text, self.en_tweet, self.ru_tweet]
