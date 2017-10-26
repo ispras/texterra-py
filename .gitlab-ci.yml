@@ -14,9 +14,6 @@ before_script:
   - mkdir -p pip_cache/pip
   - python --version
 
-after_script:
-  - rm -vf ~/.pypirc
-
 python3:
   stage: test
   image: python:3.5
