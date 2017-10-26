@@ -10,4 +10,3 @@ def process(document, rtype=None, api=None):
         return document['annotations'][annotationName][0]['value']
     except KeyError:
         return ''
-

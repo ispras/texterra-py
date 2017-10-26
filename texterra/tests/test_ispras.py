@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 import unittest
 import texterra
 import types
 import six
-
+from os import getenv
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
-
-from os import getenv
 
 
 # Texterra Tests

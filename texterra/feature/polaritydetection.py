@@ -16,4 +16,3 @@ def process(document, rtype=None, api=None):
             return 'NEUTRAL', document['annotations'][annotationName[0]][0]['value']
         else:
             return 'NEUTRAL', 'general'
-

@@ -23,4 +23,3 @@ def process(document, rtype=None, api=None):
                 tokens.append((token['start'], token['end'], document['text'][token['start']: token['end']]))
 
     return tokens
-

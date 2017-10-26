@@ -29,4 +29,3 @@ def process(document, rtype=None, api=None):
             result = [c[1] for c in concepts]
 
     return result
-

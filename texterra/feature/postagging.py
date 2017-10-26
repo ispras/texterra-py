@@ -23,4 +23,3 @@ def process(document, rtype=None, api=None):
                 pos_tokens.append((token['start'], token['end'], document['text'][token['start']: token['end']],
                                    token['value']['tag']))
     return pos_tokens
-
