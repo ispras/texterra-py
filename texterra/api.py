@@ -11,7 +11,7 @@ from . import utils
 
 class API(utils.HttpBase):
     """
-    This class provides methods to work with Texterra REST via OpenAPI, including NLP and custom queries.
+    This class provides methods for natural language processing with Texterra REST via OpenAPI.
     """
 
     # default texterra path
@@ -283,7 +283,7 @@ class API(utils.HttpBase):
 
     # Helper methods
 
-    def batch_query(self, texts, params):
+    def _batch_query(self, texts, params):
         """ Invokes custom batch request to Texterra. Returns json. """
         result = self.post('nlp', params, json=texts)
         return result
@@ -299,7 +299,7 @@ class API(utils.HttpBase):
                 if domain != '':
                     params['domain'] = domain
 
-                for document in self.batch_query(batch, params):
+                for document in self._batch_query(batch, params):
                     yield module.process(document, rtype, api=self)
 
     def _get_batches(self, texts):
