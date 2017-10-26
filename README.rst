@@ -7,13 +7,6 @@ developed by a team of researchers at the Ivannikov Institute for System Program
 
 See https://texterra.ispras.ru for more information about Texterra project.
 
-.. image:: https://img.shields.io/gitlab/license/isprasapi/texterra-py.svg?style=flat-square
-    :target: https://img.shields.io/github/license/isprasapi/texterra-py.svg
-    :alt: License
-
-.. image:: https://img.shields.io/travis/isprasapi/texterra-py/master.svg?style=flat-square
-    :target: https://travis-ci.org/isprasapi/texterra-py
-    :alt: Travis Build Status
 
 Features
 --------
