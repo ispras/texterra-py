@@ -1,6 +1,14 @@
 Texterra Python Interface
 =========================
 
+.. image:: https://img.shields.io/github/license/ispras/texterra-py.svg?style=flat-square
+    :target: https://img.shields.io/github/license/ispras/texterra-py.svg
+    :alt: License
+
+.. image:: https://img.shields.io/pypi/v/texterra.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/texterra
+    :alt: pypi Version
+
 This package provides a Python interface for Texterra API.
 Texterra is a toolkit for natural language processing and knowledge base utilization,
 developed by a team of researchers at the Ivannikov Institute for System Programming.
