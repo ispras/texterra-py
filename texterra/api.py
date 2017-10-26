@@ -223,6 +223,7 @@ class API(utils.HttpBase):
         Detects whether given texts have positive, negative, or no sentiment, with respect to domain.
         If domain isn't provided, domain detection is applied, this way method tries to achieve best results.
         If no domain is detected general domain algorithm is applied.
+        This method only accepts texts that are not empty and contain at least one non-whitespace character.
 
         :param texts: the texts to be analyzed
         :type texts: list(str) or str
@@ -238,6 +239,7 @@ class API(utils.HttpBase):
     def syntax_detection(self, sentences, domain='', language=''):
         """
         Detects syntax relations in given sentences.
+        For sentences that are empty or contain only whitespace characters, returns None.
 
         :param sentences: the sentences to be parsed
         :type sentences: list(str) or str
