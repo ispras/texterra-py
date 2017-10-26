@@ -24,6 +24,9 @@ class API(utils.HttpBase):
         """
         Provide an API key to use the default Texterra version (v1).
         For a different version of Texterra, specify a custom host.
+
+        :type key: str
+        :type host: str
         """
         if host is None:
             host = self.texterra_url
@@ -33,14 +36,14 @@ class API(utils.HttpBase):
 
         super(API, self).__init__(key, host)
 
-    # NLP annotating methods
+    # NLP methods
 
     def language_detection(self, texts):
         """
         Detects given texts' language.
 
         :param texts: the texts to be language detected
-        :type texts: list(str)
+        :type texts: list(str) or str
         :return: yields given texts' ISO 639-1 language codes
         :rtype: str generator
         """
@@ -51,7 +54,7 @@ class API(utils.HttpBase):
         Detects boundaries of sentences in given texts.
 
         :param texts: the texts to be sentence tokenized
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param rtype: sets return type (the default is 'full'):
                      - 'sentence': list(str), i.e. list of detected sentences
                      - 'annotation': list(tuple(int, int)), i.e. list of detected sentences' start, end indexes
@@ -71,7 +74,7 @@ class API(utils.HttpBase):
         Detects all tokens (minimal significant text parts) in given texts.
 
         :param texts: the texts to be tokenized.
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param rtype: sets return type (the default is 'full'):
                     - 'token': list(str), i.e. list of detected tokens
                     - 'annotation': list(tuple(int, int)), i.e. list of detected tokens' start, end indexes
@@ -91,7 +94,7 @@ class API(utils.HttpBase):
         Detects each word's lemma in given texts.
 
         :param texts: the texts to lemmatize
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param rtype: sets return type (the default is 'full'):
                      - 'lemma': list(str), i.e. list of lemmas
                      - 'annotation': list(tuple(int, int, str)), i.e. list of lemmas’ start, end indexes and value
@@ -111,7 +114,7 @@ class API(utils.HttpBase):
         Detects each token's part of speech tag in given texts.
 
         :param texts: the text to be pos-tagged
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param rtype: sets return type (the default is 'full'):
                      - 'token': list(tuple(str, str)), i.e. list of detected tokens and their tags
                      - 'annotation': list(tuple(int, int, str)), i.e. list of tokens’ start, end indexes and tag
@@ -131,7 +134,7 @@ class API(utils.HttpBase):
         Tries to correct spelling errors in given texts.
 
         :param texts: the text to be corrected
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param rtype: sets return type (the default is 'full'):
                      - 'token': list(tuple(str, str)), i.e. list of tokens and their corrections
                      - 'annotation': list(tuple(int, int, str)), i.e. list of tokens’ start, end indexes and correction
@@ -152,7 +155,7 @@ class API(utils.HttpBase):
         Finds all named entities occurrences in given texts.
 
         :param texts: the text to be analyzed
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param rtype: sets return type (the default is 'full'):
                      - 'entity': list(tuple(str, str)), i.e. list of named entities and their BBN categories
                      - 'full': list(tuple(int, int, str, str))
@@ -172,7 +175,7 @@ class API(utils.HttpBase):
         Detects the most appropriate meanings (concepts) for terms occurred in a given text.
 
         :param texts: the text to be disambiguated
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param domain: specifies texts' domain (auto-detect if not provided)
         :type domain: str
         :param language: texts' language ISO 639-1 code
@@ -189,7 +192,7 @@ class API(utils.HttpBase):
         This service extracts the key concepts for given texts.
 
         :param texts: the text to be analyzed
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param domain: specifies texts' domain (auto-detect if not provided)
         :type domain: str
         :param language: texts' language ISO 639-1 code
@@ -205,7 +208,7 @@ class API(utils.HttpBase):
         Detects for each of the given texts if it is subjective or not.
 
         :param texts: the texts to be analyzed
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param domain: specifies texts' domain (auto-detect if not provided)
         :type domain: str
         :param language: texts' language ISO 639-1 code
@@ -222,7 +225,7 @@ class API(utils.HttpBase):
         If no domain is detected general domain algorithm is applied.
 
         :param texts: the texts to be analyzed
-        :type texts: list(str)
+        :type texts: list(str) or str
         :param domain: domain
         :type domain: str
         :param language: texts' language ISO 639-1 code
@@ -237,7 +240,7 @@ class API(utils.HttpBase):
         Detects syntax relations in given sentences.
 
         :param sentences: the sentences to be parsed
-        :type sentences: list(str)
+        :type sentences: list(str) or str
         :param domain: domain
         :type domain: str
         :param language: texts' language ISO 639-1 code
@@ -247,7 +250,7 @@ class API(utils.HttpBase):
         """
         return self._process_texts(sentences, feature.syntaxdetection, domain=domain, language=language)
 
-    # Section of KBM methods
+    # KBM methods
 
     def _wrap_concepts(self, concepts, kbnames):
         """ Utility wrapper for matrix parameters """
@@ -263,15 +266,15 @@ class API(utils.HttpBase):
         """
         Get attributes for concepts(list or single concept, each concept is {id}, {kbname} is separate parameter).
         Supported attributes:
-            coordinates - GPS coordinates
-            definition - brief concept definition
-            url(<language>) - URL to page with description of the given concept on the specified language
-            <language> - language code, like: en, de, fr, ko, ru, ...
-            synonym - different textual representations of the concept
-            title - concept title
-            translation(<language>) textual representation of the concept on the specified language
-            <language> - language code, like: en, de, fr, ko, ru, ...
-            type - concept type
+            'coordinates' - GPS coordinates
+            'definition' - brief concept definition
+            'url' or 'url(<language>)' - URL to page with description of the given concept on the specified language
+            '<language>' - language code, like: en, de, fr, ko, ru, ...
+            'synonym' - different textual representations of the concept
+            'title' - concept title
+            'translation(<language>)' textual representation of the concept on the specified language
+            '<language>' - language code (e.g. en, de, fr, ko, ru, ...)
+            'type' - concept type
         """
         params = {'attribute': atr_list or []}
         return self.get('walker/{}'.format(self._wrap_concepts(concepts, kbnames)), params)
@@ -298,7 +301,7 @@ class API(utils.HttpBase):
                     yield module.process(document, rtype, api=self)
 
     def _get_batches(self, texts):
-        """ Reads texts from iterator and yield in 1MB-size batches."""
+        """ Reads texts from iterator and yields in 1MB-size batches."""
         if isinstance(texts, six.string_types):
             self._check_size([texts])
             yield [{'text': texts}]

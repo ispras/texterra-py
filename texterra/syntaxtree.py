@@ -22,12 +22,12 @@ class SyntaxTree(object):
         tree (dict): a dictionary containing the sentence's parse tree. In the dictionary, a head element serves
             as a key and the value stores the list of its child elements.
 
-        toString (str): a string representation of the sentence's dependency parse.
+        to_string (str): a string representation of the sentence's dependency parse.
     """
 
     def __init__(self, annotated_text):
         """
-        Receives a texterra-annotated text and initializes the syntax tree.
+        Receives a Texterra-annotated text and initializes the syntax tree.
         """
         self.tokens = ['ROOT']  # initially has only root element
         self.spans = [None]
@@ -72,7 +72,7 @@ class SyntaxTree(object):
 
     def _build_tree(self, index):
         """
-        Traverses the elements and recursively adds children of element at index to the tree.
+        Traverses parse tree's elements and recursively adds children of element at given index to the tree.
 
         :param index: head element's index
         """
