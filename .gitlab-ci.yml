@@ -13,7 +13,6 @@ stages:
 before_script:
   - mkdir -p pip_cache/pip
   - python --version
-  - pip install -r requirements-test.txt
 
 after_script:
   - rm -vf ~/.pypirc
@@ -22,24 +21,23 @@ python3:
   stage: test
   image: python:3.5
   script:
+    - pip install -r requirements-test.txt
     - python -m unittest discover
 
 python2:
   stage: test
   image: python:2.7
   script:
+    - pip install -r requirements-test.txt
     - python -m unittest discover
 
 deploy_pypi:
   stage: deploy
   image: python:3.5
   script:
-    - pip install wheel
-    - printf "[distutils]\nindex-servers =\n    pypi\n\n" >> ~/.pypirc
-    - printf "[pypi]\n""repository:"" ${PYPI_SERVER}\n" >> ~/.pypirc
-    - printf "username= ${PYPI_USER}\n" >> ~/.pypirc
-    - printf "password= ${PYPI_PASSWORD}\n" >> ~/.pypirc
-    - python setup.py check sdist bdist_wheel upload -r pypi
+    - pip install wheel twine
+    - python setup.py check sdist bdist_wheel
+    - twine upload dist/*
   only:
     - /^v\d+\.\d+\.\d+([abc]\d*)?$/
   except:
