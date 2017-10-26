@@ -97,4 +97,4 @@ class SyntaxTree(object):
             return children, to_string[1:]
 
     def __str__(self):
-        return self.toString
+        return self.to_string
