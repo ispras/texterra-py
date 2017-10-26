@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name="texterra",
     version='1.0.0',
-    desciption="API for natural language processing.",
+    description="API for natural language processing.",
     long_description=long_description,
     url="https://texterra.ispras.ru",
     license="Apache License, Version 2.0",
