@@ -19,8 +19,9 @@ class SyntaxTree(object):
         labels (list(str)): the list of each token's dependency type from its head. The list starts with a
             'None' value for the root element (the root has no head element).
 
-        tree (dict): a dictionary containing the sentence's parse tree. In the dictionary, a head element serves
-            as a key and the value stores the list of its child elements.
+        tree (dict): a dictionary containing the sentence's parse tree, with root elements as key and their child
+            elements as value. Child elements that have their own children are also stored as dictionaries, where
+            they serve as key and their children as value.
 
         to_string (str): a string representation of the sentence's dependency parse.
     """
@@ -34,29 +35,53 @@ class SyntaxTree(object):
         self.heads = [None]  # root has no head element
         self.labels = [None]  # root has no head element => no label
 
-        span_to_index = {}
-        i = 1
-        for an in annotated_text['annotations']['syntax-relation']:
+        span_to_index = {}  # maps token spans to indexes
+        root_indexes = []  # to store indexes of root elements
+
+        # get token spans and values from the Texterra-annotated document
+        for i, an in enumerate(annotated_text['annotations']['syntax-relation']):
             span = (an['start'], an['end'])
             self.spans.append(span)
-            span_to_index[span] = i
+            span_to_index[span] = i + 1
             self.tokens.append(annotated_text['text'][an['start']: an['end']])
-            i += 1
 
-        for an in annotated_text['annotations']['syntax-relation']:
+        # iterate over the document again to set heads and labels
+        for i, an in enumerate(annotated_text['annotations']['syntax-relation']):
             if 'parent' in an['value']:
                 self.heads.append(span_to_index[(an['value']['parent']['start'], an['value']['parent']['end'])])
                 self.labels.append(an['value']['type'])
             else:
                 self.heads.append(0)
                 self.labels.append('ROOT')
+                root_indexes.append(i + 1)
 
-        root_index = self.heads.index(0)
-        root_span = self.spans[root_index]
-        self.visited = [root_index]
+        # stores dependency structure of the sentence in dict, with
+        # root elements as key and their child elements as value.
+        # child elements that have their own children are stored as dicts
+        # where they serve as key and their children as value.
         self.tree = {}
-        self.tree[(root_span[0], root_span[1], self.tokens[root_index], 'ROOT')], s = self._build_tree(root_index)
-        self.to_string = s
+        self._visited = []  # stores elements visited during tree's building process
+        self.to_string = ''
+
+        # iterate over root elements and build their subtrees
+        for root_index in root_indexes:
+            # get the root's span
+            root_span = self.spans[root_index]
+
+            # indicate the root as visited
+            self._visited.append(root_index)
+
+            # build the roots subtree
+            sub_tree, sub_tree_string = self._build_tree(root_index)
+            sub_tree_key = (root_span[0], root_span[1], self.tokens[root_index], 'ROOT')
+            self.tree[sub_tree_key] = sub_tree
+
+            # attach the subtrees string to the sentence's parse string
+            if len(root_indexes) > 0 and not sub_tree_string.startswith('('):
+                format_string = '({0}) '
+            else:
+                format_string = '{0} '
+            self.to_string += format_string.format(sub_tree_string)
 
     def get_labels(self):
         """ Returns the list of each token's dependency type from its head. """
@@ -82,8 +107,8 @@ class SyntaxTree(object):
 
         for i in range(1, len(self.tokens)):
 
-            if i not in self.visited and self.heads[i] == index:
-                self.visited.append(i)
+            if i not in self._visited and self.heads[i] == index:
+                self._visited.append(i)
                 child_tree = {}
                 c, s = self._build_tree(i)
                 child_tree[(self.spans[i][0], self.spans[i][1], self.tokens[i], self.labels[i])] = c

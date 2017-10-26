@@ -154,7 +154,7 @@ class TexterraAPITest(unittest.TestCase):
                          ["advmod", "nsubj", "dep", "ROOT", "advmod", "prep", "det", "pobj", "punct", "nsubj",
                           "cop", "rcmod", "dep"])
         self.assertEqual(en_result.to_string,
-                         "(grow/ROOT Our/advmod kids/nsubj should/dep up/advmod (in/prep (America/pobj an/det (real/rcmod where/punct opportunity/nsubj is/cop ./dep))))")
+                         "(grow/ROOT Our/advmod kids/nsubj should/dep up/advmod (in/prep (America/pobj an/det (real/rcmod where/punct opportunity/nsubj is/cop ./dep)))) ")
 
         # test russian
         ru_test_sent = "Согласно официальному прогнозу Минэкономразвития, ВВП России упадет на 3%."
@@ -164,7 +164,7 @@ class TexterraAPITest(unittest.TestCase):
                          ["обст", "опред", "предл", "квазиагент", "PUNCT", "предик", "квазиагент", "ROOT", "2-компл",
                           "предл", "PUNCT"])
         self.assertEqual(ru_result.to_string,
-                         "(упадет/ROOT (Согласно/обст (прогнозу/предл официальному/опред (Минэкономразвития/квазиагент ,/PUNCT))) (ВВП/предик России/квазиагент) (на/2-компл (3%/предл ./PUNCT)))")
+                         "(упадет/ROOT (Согласно/обст (прогнозу/предл официальному/опред (Минэкономразвития/квазиагент ,/PUNCT))) (ВВП/предик России/квазиагент) (на/2-компл (3%/предл ./PUNCT))) ")
 
     def test_language_detection(self):
         # test return type
