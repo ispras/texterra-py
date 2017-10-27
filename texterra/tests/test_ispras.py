@@ -57,6 +57,11 @@ class TexterraAPITest(unittest.TestCase):
                     entry_concepts.append(concept)
                 concepts.append(entry_concepts)
 
+        # test for known example
+        self.assertEqual(concepts[0], ["http://en.m.wikipedia.org/wiki/Flash_memory"])
+        self.assertEqual(concepts[1][0],
+                         "http://ru.m.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80_%D0%B8%D0%BD%D0%BE%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_%D0%B4%D0%B5%D0%BB")
+
         # test for text iterator
         result = self.texterra.key_concepts(texts)
         self.assertIsInstance(result, types.GeneratorType)
@@ -66,21 +71,11 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(concept, six.string_types)
 
         # test memory limit on large text
-        expected_msg = 'Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes. \
-                       Consider splitting the text into smaller pieces.'.format(self.en_text[:50],
-                                                                                self.texterra.max_batch_size)
-        with self.assertRaises(ValueError, msg=expected_msg):
-            self.texterra.key_concepts(5000 * self.en_text)
-        # except Exception as e:
-        #     self.assertIsInstance(e, ValueError)
-        #     self.assertEqual(str(e), expected_msg)
-
-        # test that exception is not fired for long list of small texts
-        # when the list's overall memory exceeds the limit
-
-        self.assertEqual(concepts[0], ["http://en.m.wikipedia.org/wiki/Flash_memory"])
-        self.assertEqual(concepts[1][0],
-                         "http://ru.m.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80_%D0%B8%D0%BD%D0%BE%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_%D0%B4%D0%B5%D0%BB")
+        format_string = 'Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes.'
+        expected_msg = format_string.format(self.en_text[:50], self.texterra.max_batch_size)
+        with self.assertRaises(ValueError) as cm:
+            concepts = next(self.texterra.key_concepts(100000 * self.en_text))
+        self.assertEqual(str(cm.exception), expected_msg)
 
     def test_disambiguation(self):
         # test return type
