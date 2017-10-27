@@ -112,6 +112,7 @@ class API(utils.HttpBase):
     def pos_tagging(self, texts, rtype='full', domain='', language=''):
         """
         Detects each token's part of speech tag in given texts.
+        The method uses the Penn Treebank tagset for English, and SynTagRus tags for Russian.
 
         :param texts: the text to be pos-tagged
         :type texts: list(str) or str
@@ -238,8 +239,9 @@ class API(utils.HttpBase):
 
     def syntax_detection(self, sentences, domain='', language=''):
         """
-        Detects syntax relations in given sentences.
-        For sentences that are empty or contain only whitespace characters, returns None.
+        This method detects syntax relations in given sentences. It uses the Penn Treebank labels for English,
+        and SynTagRus labels for Russian.
+        For sentences that are empty or contain only whitespace characters, None is returned.
 
         :param sentences: the sentences to be parsed
         :type sentences: list(str) or str
