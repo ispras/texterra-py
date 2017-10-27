@@ -305,26 +305,28 @@ class API(utils.HttpBase):
     def _get_batches(self, texts):
         """ Reads texts from iterator and yields in 1MB-size batches."""
         if isinstance(texts, six.string_types):
-            self._check_size([texts])
+            if sys.getsizeof(texts) >= self.max_batch_size:
+                msg = 'Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes.'
+                raise ValueError(msg.format(texts[:50], self.max_batch_size))
             yield [{'text': texts}]
+
         else:
             batch = []
+            batch_size = 0
             for text in texts:
+                text_memory = sys.getsizeof(text)
                 txt = {'text': text}
-                if self._check_size(batch + [txt]):
-                    batch.append(txt)
-                else:
-                    yield batch
-                    batch = [txt]
-                    self._check_size(batch)
-            yield batch
+                if text_memory >= self.max_batch_size:
+                    msg = 'Given text "{0}..." is too large, size exceeds the limit of {1} bytes.'
+                    raise ValueError(msg.format(text[:50], self.max_batch_size))
 
-    def _check_size(self, texts):
-        """ Checks that texts don't exceed memory limit. """
-        if sys.getsizeof(texts) >= self.max_batch_size:
-            if len(texts) == 1:
-                raise ValueError('Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes. \
-                        Consider splitting the text into smaller pieces.'.format(texts[0][:50], self.max_batch_size))
-            # raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.max_batch_size))
-            return False
-        return True
+                elif batch_size + text_memory >= self.max_batch_size:
+                    yield batch
+                    batch_size = text_memory
+                    batch = [txt]
+
+                else:
+                    batch_size += text_memory
+                    batch.append(txt)
+
+            yield batch
