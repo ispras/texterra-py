@@ -310,11 +310,12 @@ class API(utils.HttpBase):
         else:
             batch = []
             for text in texts:
-                if self._check_size(batch + [text]):
-                    batch.append({'text': text})
+                txt = {'text': text}
+                if self._check_size(batch + [txt]):
+                    batch.append(txt)
                 else:
                     yield batch
-                    batch = [{'text': text}]
+                    batch = [txt]
                     self._check_size(batch)
             yield batch
 
@@ -322,6 +323,8 @@ class API(utils.HttpBase):
         """ Checks that texts don't exceed memory limit. """
         if sys.getsizeof(texts) >= self.max_batch_size:
             if len(texts) == 1:
-                raise ValueError("Given text is over {0} bytes, exceeds limit.".format(self.max_batch_size))
-            raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.max_batch_size))
+                raise ValueError('Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes. \
+                        Consider splitting the text into smaller pieces.'.format(texts[0][:50], self.max_batch_size))
+            # raise ValueError("Given texts are over {0} bytes, exceed limit.".format(self.max_batch_size))
+            return False
         return True

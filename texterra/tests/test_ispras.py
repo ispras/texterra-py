@@ -66,11 +66,17 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(concept, six.string_types)
 
         # test memory limit on large text
-        try:
+        expected_msg = 'Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes. \
+                       Consider splitting the text into smaller pieces.'.format(self.en_text[:50],
+                                                                                self.texterra.max_batch_size)
+        with self.assertRaises(ValueError, msg=expected_msg):
             self.texterra.key_concepts(5000 * self.en_text)
-        except Exception as e:
-            self.assertIsInstance(e, ValueError)
-            self.assertEqual(str(e), "Given text is over 1000000 bytes, exceeds limit.")
+        # except Exception as e:
+        #     self.assertIsInstance(e, ValueError)
+        #     self.assertEqual(str(e), expected_msg)
+
+        # test that exception is not fired for long list of small texts
+        # when the list's overall memory exceeds the limit
 
         self.assertEqual(concepts[0], ["http://en.m.wikipedia.org/wiki/Flash_memory"])
         self.assertEqual(concepts[1][0],
