@@ -83,3 +83,10 @@ To access different tools, simply call the corresponding method:
 .. code:: python
 
     tags = t.pos_tagging('Hello World')
+
+Methods also accept iterables:
+
+.. code:: python
+
+    tagged_sents = t.pos_tagging(['Flat is better than nested.', 'Now is better than never.'])
+
