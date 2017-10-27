@@ -71,7 +71,7 @@ class TexterraAPITest(unittest.TestCase):
                 self.assertIsInstance(concept, six.string_types)
 
         # test memory limit on large text
-        format_string = 'Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes.'
+        format_string = 'Given text "{0}..." is too large, size exceeds the limit of {1} bytes.'
         expected_msg = format_string.format(self.en_text[:50], self.texterra.max_batch_size)
         with self.assertRaises(ValueError) as cm:
             concepts = next(self.texterra.key_concepts(100000 * self.en_text))

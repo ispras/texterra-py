@@ -305,28 +305,41 @@ class API(utils.HttpBase):
     def _get_batches(self, texts):
         """ Reads texts from iterator and yields in 1MB-size batches."""
         if isinstance(texts, six.string_types):
-            if sys.getsizeof(texts) >= self.max_batch_size:
-                msg = 'Given text "{0}..." is too large, batch size exceeds the limit of {1} bytes.'
-                raise ValueError(msg.format(texts[:50], self.max_batch_size))
+            # texts contains only one text
+            # check if it's of acceptable size and yield it
+            self._check_text_size(texts)
             yield [{'text': texts}]
 
         else:
+            # collect texts into batches of size 1 MB
             batch = []
             batch_size = 0
             for text in texts:
-                text_memory = sys.getsizeof(text)
-                txt = {'text': text}
-                if text_memory >= self.max_batch_size:
-                    msg = 'Given text "{0}..." is too large, size exceeds the limit of {1} bytes.'
-                    raise ValueError(msg.format(text[:50], self.max_batch_size))
 
-                elif batch_size + text_memory >= self.max_batch_size:
+                # check that text's size does not exceed memory limit
+                text_size = self._check_text_size(text)
+
+                # check if batch size including new text exceeds memory limit
+                if batch_size + text_size >= self.max_batch_size:
+
+                    # yield collected texts
                     yield batch
-                    batch_size = text_memory
-                    batch = [txt]
+
+                    # start collecting new batch
+                    batch_size = text_size
+                    batch = [{'text': text}]
 
                 else:
-                    batch_size += text_memory
-                    batch.append(txt)
+                    batch_size += text_size
+                    batch.append({'text': text})
 
             yield batch
+
+    def _check_text_size(self, text):
+        """ Checks that the text's size does not exceed memory limit """
+        text_size = sys.getsizeof(text)
+        if text_size >= self.max_batch_size:
+            msg = 'Given text "{0}..." is too large, size exceeds the limit of {1} bytes.'
+            raise ValueError(msg.format(text[:50], self.max_batch_size))
+
+        return text_size
