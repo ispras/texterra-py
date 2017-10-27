@@ -38,6 +38,5 @@ setup(
     install_requires=[
         'requests',
         'six'
-    ],
-    py_modules=['texterra']
+    ]
 )
