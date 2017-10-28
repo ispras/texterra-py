@@ -34,7 +34,7 @@ deploy_pypi:
   script:
     - pip install wheel twine
     - python setup.py check sdist bdist_wheel
-    - twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
+    - twine upload dist/*
   only:
     - /^v\d+\.\d+\.\d+([abc]\d*)?$/
   except:
